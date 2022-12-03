@@ -3,7 +3,7 @@ package com.pragmadreams.redaktor.domain.repository
 import com.pragmadreams.redaktor.entity.Element
 import com.pragmadreams.redaktor.entity.Page
 
-interface EditorRepository {
+internal interface EditorRepository {
 
     suspend fun fetchPageById(pageId: String) : Page
 
