@@ -40,6 +40,10 @@ class MainViewModel : ViewModel() {
         when (intent) {
             PageUiIntent.SomeUserIntent -> {
                 println("mylog Intent: $intent")
+
+                uiState.value = uiState.value.copy(
+                    textState = uiState.value.textState + " UPD"
+                )
             }
         }
     }

@@ -49,10 +49,7 @@ class MainView : ComposeView<PageUiState, PageUiIntent>() {
                     Surface(
                         modifier = Modifier
                             .padding(20.dp)
-                            .border(1.dp, Color.Gray)
-                            .clickable {
-                                offerIntent(PageUiIntent.SomeUserIntent)
-                            },
+                            .border(1.dp, Color.Gray),
                     ) {
                         Text(
                             text = LocalState.current.textState,

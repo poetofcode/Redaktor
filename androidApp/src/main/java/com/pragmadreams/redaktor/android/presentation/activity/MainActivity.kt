@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
             val vm: MainViewModel = viewModel()
 
             MainView().WrappedView(
-                state = PageUiState(),
+                state = vm.uiState.value,
                 offerIntent = vm::handleUiIntent
             )
         }

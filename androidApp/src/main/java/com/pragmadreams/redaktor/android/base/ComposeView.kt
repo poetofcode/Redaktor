@@ -28,10 +28,9 @@ abstract class ComposeView<StateType : State, IntentType : Intent> {
             MyApplicationTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    ContentView()
-                }
+                    color = MaterialTheme.colors.background,
+                    content = { ContentView() }
+                )
             }
         }
     }
