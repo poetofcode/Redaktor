@@ -50,10 +50,12 @@ class MainView : ComposeView<PageUiState, PageUiIntent>() {
                         modifier = Modifier
                             .padding(20.dp)
                             .border(1.dp, Color.Gray)
-                            .clickable { offerIntent(PageUiIntent.SomeUserIntent) },
+                            .clickable {
+                                offerIntent(PageUiIntent.SomeUserIntent)
+                            },
                     ) {
                         Text(
-                            text = state.textState,
+                            text = LocalState.current.textState,
                             modifier = Modifier.padding(
                                 horizontal = paddHor,
                                 vertical = paddingVert
