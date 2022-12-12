@@ -1,9 +1,13 @@
 package com.pragmadreams.redaktor.android.base
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Modifier
+import com.pragmadreams.redaktor.android.MyApplicationTheme
 
 abstract class ComposeView<StateType : State, IntentType : Intent> {
 
@@ -21,8 +25,13 @@ abstract class ComposeView<StateType : State, IntentType : Intent> {
             LocalIntent provides offerIntent,
             LocalState provides state
         ) {
-            MaterialTheme {
-                ContentView()
+            MyApplicationTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colors.background
+                ) {
+                    ContentView()
+                }
             }
         }
     }

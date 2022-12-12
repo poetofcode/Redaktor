@@ -17,17 +17,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             val vm: MainViewModel = viewModel()
 
-            MyApplicationTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    MainView().WrappedView(
-                        state = PageUiState(),
-                        offerIntent = vm::handleUiIntent
-                    )
-                }
-            }
+            MainView().WrappedView(
+                state = PageUiState(),
+                offerIntent = vm::handleUiIntent
+            )
         }
     }
 

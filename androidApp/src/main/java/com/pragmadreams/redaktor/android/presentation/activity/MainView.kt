@@ -29,16 +29,11 @@ class MainView : ComposeView<PageUiState, PageUiIntent>() {
 
     @Composable
     override fun ContentView() {
-        val vm: MainViewModel = viewModel()
-        CompositionLocalProvider(LocalIntent provides vm::handleUiIntent) {
-            Column {
-                Toolbar()
-                ElementList()
-           }
-        }
-
+        Column {
+            Toolbar()
+            ElementList()
+       }
     }
-
 
     @Composable
     private fun ElementList() {
