@@ -18,6 +18,9 @@ class MainViewModel : ViewModel() {
     init {
         useCase.fetchPageById("1")
             .onEach {
+
+                val page = it
+
                 println("mylog Page: $it")
             }
             .launchIn(viewModelScope)
