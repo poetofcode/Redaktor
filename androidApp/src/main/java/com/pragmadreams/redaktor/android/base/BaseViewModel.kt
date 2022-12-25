@@ -3,6 +3,9 @@ package com.pragmadreams.redaktor.android.base
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.pragmadreams.redaktor.android.shared.Hub
+import kotlinx.coroutines.launch
 
 abstract class BaseViewModel<S: State, I: Intent> : ViewModel() {
 
@@ -15,4 +18,7 @@ abstract class BaseViewModel<S: State, I: Intent> : ViewModel() {
         state.value = state.value.updater()
     }
 
+    fun offerEffect(effect: Effect) {
+        viewModelScope.launch { Hub.effectFlow.emit(effect) }
+    }
 }

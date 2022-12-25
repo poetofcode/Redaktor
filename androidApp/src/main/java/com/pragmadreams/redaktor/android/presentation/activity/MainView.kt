@@ -2,6 +2,7 @@ package com.pragmadreams.redaktor.android.presentation.activity
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -51,7 +52,8 @@ class MainView : ComposeView<PageState, PageIntent>() {
                     Surface(
                         modifier = Modifier
                             .padding(20.dp)
-                            .border(1.dp, Color.Gray),
+                            .border(1.dp, Color.Gray)
+                            .clickable { offerIntent(PageIntent.ToSampleScreen) },
                     ) {
                         Text(
                             text = LocalState.current.textState,

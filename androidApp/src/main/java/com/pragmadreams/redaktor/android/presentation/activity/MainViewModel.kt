@@ -5,6 +5,8 @@ import com.pragmadreams.redaktor.android.base.BaseViewModel
 import com.pragmadreams.redaktor.android.base.Intent
 import com.pragmadreams.redaktor.android.base.State
 import com.pragmadreams.redaktor.android.domain.UseCases
+import com.pragmadreams.redaktor.android.navigation.NavigationEffect
+import com.pragmadreams.redaktor.android.navigation.RootScreen
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -36,6 +38,9 @@ class MainViewModel : BaseViewModel<PageState, PageIntent>() {
                     textState = state.value.textState + " NEW"
                 ) }
             }
+            PageIntent.ToSampleScreen -> {
+                offerEffect(NavigationEffect.Navigate(RootScreen.SampleScreen))
+            }
         }
     }
 
@@ -46,5 +51,6 @@ class MainViewModel : BaseViewModel<PageState, PageIntent>() {
 sealed class PageIntent : Intent {
 
     object SomeUserIntent : PageIntent()
+    object ToSampleScreen : PageIntent()
 
 }
