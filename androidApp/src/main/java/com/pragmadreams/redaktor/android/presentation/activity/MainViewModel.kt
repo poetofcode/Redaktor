@@ -8,11 +8,11 @@ import com.pragmadreams.redaktor.android.domain.UseCases
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-data class PageUiState(
+data class PageState(
     val textState: String = "Page UI state"
 ) : State
 
-class MainViewModel : BaseViewModel<PageUiState, PageUiIntent>() {
+class MainViewModel : BaseViewModel<PageState, PageIntent>() {
 
     private val useCase = UseCases.editorUseCase
 
@@ -27,9 +27,9 @@ class MainViewModel : BaseViewModel<PageUiState, PageUiIntent>() {
             .launchIn(viewModelScope)
     }
 
-    override fun handleIntent(intent: PageUiIntent) {
+    override fun handleIntent(intent: PageIntent) {
         when (intent) {
-            PageUiIntent.SomeUserIntent -> {
+            PageIntent.SomeUserIntent -> {
                 println("mylog Intent: $intent")
 
                 updateState { copy(
@@ -39,12 +39,12 @@ class MainViewModel : BaseViewModel<PageUiState, PageUiIntent>() {
         }
     }
 
-    override fun createState(): PageUiState = PageUiState()
+    override fun createState(): PageState = PageState()
 
 }
 
-sealed class PageUiIntent : Intent {
+sealed class PageIntent : Intent {
 
-    object SomeUserIntent : PageUiIntent()
+    object SomeUserIntent : PageIntent()
 
 }
