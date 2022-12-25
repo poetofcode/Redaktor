@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
+import com.pragmadreams.redaktor.android.navigation.RootNavGraph
 
 class MainActivity : ComponentActivity() {
 
@@ -11,12 +13,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val vm: MainViewModel = viewModel()
-
-            MainView().WrappedView(
-                state = vm.state.value,
-                offerIntent = vm::handleIntent
-            )
+            val navController = rememberNavController().apply {
+                // collectNavigationEvents(this)
+            }
+            RootNavGraph(navController = navController)
         }
     }
 

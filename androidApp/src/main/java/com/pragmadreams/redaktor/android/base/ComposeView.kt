@@ -19,7 +19,11 @@ abstract class ComposeView<StateType : State, IntentType : Intent> {
 
 
     @Composable
-    open fun WrappedView(state: StateType, offerIntent: (IntentType) -> Unit) {
+    fun Content(
+        state: StateType,
+        offerIntent: (IntentType) -> Unit,
+        content: @Composable () -> Unit
+    ) {
         this.state = state
         CompositionLocalProvider(
             LocalIntent provides offerIntent,
@@ -29,13 +33,13 @@ abstract class ComposeView<StateType : State, IntentType : Intent> {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background,
-                    content = { ContentView() }
+                    content = content
                 )
             }
         }
     }
 
     @Composable
-    protected abstract fun ContentView()
+    protected abstract fun Content()
 
 }

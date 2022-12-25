@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pragmadreams.redaktor.android.MyApplicationTheme
 import com.pragmadreams.redaktor.android.base.ComposeView
 
@@ -26,11 +27,14 @@ import com.pragmadreams.redaktor.android.base.ComposeView
 class MainView : ComposeView<PageState, PageIntent>() {
 
     @Composable
-    override fun ContentView() {
-        Column {
-            Toolbar()
-            ElementList()
-       }
+    public override fun Content() {
+        val vm: MainViewModel = viewModel()
+        Content(state = vm.state.value, offerIntent = vm::handleIntent) {
+            Column {
+                Toolbar()
+                ElementList()
+            }
+        }
     }
 
     @Composable
@@ -97,11 +101,15 @@ class MainView : ComposeView<PageState, PageIntent>() {
         val previewState = PageState(
             textState = "test state"
         )
-        CompositionLocalProvider(LocalState provides previewState) {
-            MyApplicationTheme {
-                ContentView()
-            }
-        }
+//        CompositionLocalProvider(LocalState provides previewState) {
+//            MyApplicationTheme {
+//                Content()
+//            }
+//        }
+
+//        MainView().Content(state = previewState, offerIntent = {}) {
+//
+//        }
     }
 
 }

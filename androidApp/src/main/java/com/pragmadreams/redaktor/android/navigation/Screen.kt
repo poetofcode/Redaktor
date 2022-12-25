@@ -1,7 +1,7 @@
 package com.pragmadreams.redaktor.android.navigation
 
 open class Screen(
-    open val route: String = String(),
+    open val route: String,
 ) {
     private var arguments : List<Pair<String, Any>> = emptyList()
 
