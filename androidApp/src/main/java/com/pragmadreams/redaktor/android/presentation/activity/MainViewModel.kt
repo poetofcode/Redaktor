@@ -1,9 +1,7 @@
 package com.pragmadreams.redaktor.android.presentation.activity
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pragmadreams.redaktor.android.base.BaseViewModel
 import com.pragmadreams.redaktor.android.base.Intent
 import com.pragmadreams.redaktor.android.base.State
 import com.pragmadreams.redaktor.android.domain.UseCases
@@ -14,14 +12,9 @@ data class PageUiState(
     val textState: String = "Page UI state"
 ) : State
 
-class MainViewModel : ViewModel() {
+class MainViewModel : BaseViewModel<PageUiState, PageUiIntent>() {
 
     private val useCase = UseCases.editorUseCase
-
-    // val textState: MutableState<String> = mutableStateOf("")
-
-    // TODO Move it in BaseViewModel
-    val uiState: MutableState<PageUiState> = mutableStateOf(PageUiState())
 
     init {
         useCase.fetchPageById("1")
@@ -32,21 +25,21 @@ class MainViewModel : ViewModel() {
                 println("mylog Page: $it")
             }
             .launchIn(viewModelScope)
-
-        // textState.value = "Passed from ViewModel"
     }
 
-    fun handleUiIntent(intent: PageUiIntent) {
+    override fun handleIntent(intent: PageUiIntent) {
         when (intent) {
             PageUiIntent.SomeUserIntent -> {
                 println("mylog Intent: $intent")
 
-                uiState.value = uiState.value.copy(
-                    textState = uiState.value.textState + " UPD"
-                )
+                updateState { copy(
+                    textState = state.value.textState + " NEW"
+                ) }
             }
         }
     }
+
+    override fun createState(): PageUiState = PageUiState()
 
 }
 

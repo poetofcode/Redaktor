@@ -3,11 +3,7 @@ package com.pragmadreams.redaktor.android.presentation.activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.pragmadreams.redaktor.android.MyApplicationTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -18,8 +14,8 @@ class MainActivity : ComponentActivity() {
             val vm: MainViewModel = viewModel()
 
             MainView().WrappedView(
-                state = vm.uiState.value,
-                offerIntent = vm::handleUiIntent
+                state = vm.state.value,
+                offerIntent = vm::handleIntent
             )
         }
     }
