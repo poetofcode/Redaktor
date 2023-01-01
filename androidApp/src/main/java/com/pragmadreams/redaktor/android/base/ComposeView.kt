@@ -11,19 +11,14 @@ import com.pragmadreams.redaktor.android.MyApplicationTheme
 
 abstract class ComposeView<StateType : State, IntentType : Intent> {
 
-    private val emptyFunc: (IntentType) -> Unit = {}
     private lateinit var state : StateType
+    private val emptyFunc: (IntentType) -> Unit = {}
 
     protected val LocalIntent = staticCompositionLocalOf { emptyFunc }
     protected val LocalState = staticCompositionLocalOf { state }
 
-
     @Composable
-    fun Content(
-        state: StateType,
-        offerIntent: (IntentType) -> Unit,
-        content: @Composable () -> Unit
-    ) {
+    fun Content(state: StateType, offerIntent: (IntentType) -> Unit = {}) {
         this.state = state
         CompositionLocalProvider(
             LocalIntent provides offerIntent,
@@ -33,13 +28,18 @@ abstract class ComposeView<StateType : State, IntentType : Intent> {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background,
-                    content = content
+                    content = { Layout() }
                 )
             }
         }
     }
 
     @Composable
-    protected abstract fun Content()
+    fun Content(viewModel: BaseViewModel<StateType, IntentType>) {
+        Content(state = viewModel.state.value, offerIntent = viewModel::handleIntent)
+    }
+
+    @Composable
+    protected abstract fun Layout()
 
 }

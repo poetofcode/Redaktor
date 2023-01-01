@@ -9,9 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.pragmadreams.redaktor.android.presentation.activity.MainView
+import com.pragmadreams.redaktor.android.presentation.activity.MainViewModel
 import com.pragmadreams.redaktor.android.util.composable
 
 
@@ -19,12 +21,14 @@ import com.pragmadreams.redaktor.android.util.composable
 fun RootNavGraph(navController: NavHostController) {
     NavHost(navController, startDestination = RootScreen.PageScreen.route) {
         composable(RootScreen.PageScreen) {
-            MainView().Content()
+            MainView().Content(viewModel<MainViewModel>())
         }
 
         composable(RootScreen.SampleScreen) {
             Box(
-                modifier = Modifier.fillMaxSize().background(Color.Cyan),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Cyan),
                 contentAlignment = Alignment.Center
             ) {
                 Text(text = "Sample screen")
