@@ -14,14 +14,14 @@ abstract class ComposeView<StateType : State, IntentType : Intent> {
     private lateinit var state : StateType
     private val emptyFunc: (IntentType) -> Unit = {}
 
-    protected val LocalIntent = staticCompositionLocalOf { emptyFunc }
+    protected val LocalOfferIntent = staticCompositionLocalOf { emptyFunc }
     protected val LocalState = staticCompositionLocalOf { state }
 
     @Composable
     fun Content(state: StateType, offerIntent: (IntentType) -> Unit = {}) {
         this.state = state
         CompositionLocalProvider(
-            LocalIntent provides offerIntent,
+            LocalOfferIntent provides offerIntent,
             LocalState provides state
         ) {
             MyApplicationTheme {

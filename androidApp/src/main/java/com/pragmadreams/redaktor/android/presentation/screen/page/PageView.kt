@@ -31,7 +31,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
         val paddHor = 16.dp
 
         val state = LocalState.current
-        val offerIntent = LocalIntent.current
+        val offerIntent = LocalOfferIntent.current
 
         LazyColumn {
             items(state.elements) {
@@ -55,7 +55,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
                 .fillMaxWidth()
         ) {
             val state = LocalState.current
-            val offerIntent = LocalIntent.current
+            val offerIntent = LocalOfferIntent.current
 
             val buttonParams: Pair<String, () -> Unit> = when (state.mode) {
                 PageMode.VIEW -> {
