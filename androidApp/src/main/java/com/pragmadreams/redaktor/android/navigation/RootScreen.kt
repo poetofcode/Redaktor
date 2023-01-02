@@ -12,8 +12,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.pragmadreams.redaktor.android.presentation.activity.MainView
-import com.pragmadreams.redaktor.android.presentation.activity.MainViewModel
+import com.pragmadreams.redaktor.android.presentation.screen.page.PageView
+import com.pragmadreams.redaktor.android.presentation.screen.page.PageViewModel
 import com.pragmadreams.redaktor.android.util.composable
 
 
@@ -21,7 +21,7 @@ import com.pragmadreams.redaktor.android.util.composable
 fun RootNavGraph(navController: NavHostController) {
     NavHost(navController, startDestination = RootScreen.PageScreen.route) {
         composable(RootScreen.PageScreen) {
-            MainView().Content(viewModel<MainViewModel>())
+            PageView().Content(viewModel<PageViewModel>())
         }
 
         composable(RootScreen.SampleScreen) {

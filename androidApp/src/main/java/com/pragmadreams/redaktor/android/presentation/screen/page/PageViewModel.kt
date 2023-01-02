@@ -1,4 +1,4 @@
-package com.pragmadreams.redaktor.android.presentation.activity
+package com.pragmadreams.redaktor.android.presentation.screen.page
 
 import androidx.lifecycle.viewModelScope
 import com.pragmadreams.redaktor.android.base.BaseViewModel
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class MainViewModel : BaseViewModel<PageState, PageIntent>() {
+class PageViewModel : BaseViewModel<PageState, PageIntent>() {
 
     private val useCase = UseCases.editorUseCase
 
@@ -91,5 +91,5 @@ data class ElementUI(
 )
 
 enum class PageMode {
-    VIEW, EDIT, LOADING
+    VIEW, EDIT
 }

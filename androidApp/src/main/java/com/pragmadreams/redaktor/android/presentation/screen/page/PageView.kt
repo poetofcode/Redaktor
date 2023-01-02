@@ -1,13 +1,10 @@
-package com.pragmadreams.redaktor.android.presentation.activity
+package com.pragmadreams.redaktor.android.presentation.screen.page
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.pragmadreams.redaktor.android.base.ComposeView
 
 
-class MainView : ComposeView<PageState, PageIntent>() {
+class PageView : ComposeView<PageState, PageIntent>() {
 
     @Composable
     override fun Layout() {
@@ -67,9 +64,6 @@ class MainView : ComposeView<PageState, PageIntent>() {
                 PageMode.EDIT -> {
                     Pair("Закрыть") { offerIntent(PageIntent.OnFinishEditModeClick) }
                 }
-                else -> {
-                    Pair("...") {}
-                }
             }
 
             Button(modifier = Modifier.padding(horizontal = 12.dp),
@@ -95,7 +89,7 @@ class MainView : ComposeView<PageState, PageIntent>() {
         val previewState = PageState(
             textState = "test state"
         )
-        MainView().Content(previewState)
+        PageView().Content(previewState)
     }
 
 }
