@@ -1,6 +1,7 @@
 package com.pragmadreams.redaktor.android.presentation.screen.page
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pragmadreams.redaktor.android.base.ComposeView
@@ -68,8 +70,8 @@ class PageView : ComposeView<PageState, PageIntent>() {
 
                             Row(
                                 modifier = Modifier.padding(horizontal = paddHor),
-                                horizontalArrangement = Arrangement.End
                             ) {
+                                Spacer(Modifier.weight(1f))
                                 element.actions.forEach {
                                     ActionItem(action = it, element = element)
                                 }
@@ -85,9 +87,12 @@ class PageView : ComposeView<PageState, PageIntent>() {
     @Composable
     private fun ActionItem(action: ActionUI, element: ElementUI) {
         val offerIntent = LocalOfferIntent.current
-        Box(modifier = Modifier.clickable {
-            offerIntent(PageIntent.OnActionClick(element))
-        }) {
+        Box(modifier = Modifier
+            .clickable {
+                offerIntent(PageIntent.OnActionClick(element))
+            }
+            .border(width = 1.dp, color = Color.LightGray)
+            .padding(5.dp)) {
             Icon(
                 imageVector = when (action) {
                     ActionUI.Delete -> Icons.Filled.Delete
