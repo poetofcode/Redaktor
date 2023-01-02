@@ -62,7 +62,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
                     Pair("Ред.") { offerIntent(PageIntent.OnStartEditModeClick) }
                 }
                 PageMode.EDIT -> {
-                    Pair("Закрыть") { offerIntent(PageIntent.OnFinishEditModeClick) }
+                    Pair("Просмотр") { offerIntent(PageIntent.OnFinishEditModeClick) }
                 }
             }
 

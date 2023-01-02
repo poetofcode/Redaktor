@@ -44,10 +44,14 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
                 offerEffect(NavigationEffect.Navigate(RootScreen.SampleScreen))
             }
             PageIntent.OnFinishEditModeClick -> {
-
+                updateState { copy(
+                    mode = PageMode.VIEW,
+                ) }
             }
             PageIntent.OnStartEditModeClick -> {
-
+                updateState { copy(
+                    mode = PageMode.EDIT,
+                ) }
             }
         }
     }
