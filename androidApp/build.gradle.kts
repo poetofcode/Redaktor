@@ -39,6 +39,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:$COMPOSE_VER")
     implementation("androidx.compose.foundation:foundation:$COMPOSE_VER")
     implementation("androidx.compose.material:material:$COMPOSE_VER")
+    implementation("androidx.compose.material:material-icons-extended:$COMPOSE_VER")
     implementation("androidx.activity:activity-compose:1.5.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1")
     implementation("androidx.navigation:navigation-compose:2.5.2")

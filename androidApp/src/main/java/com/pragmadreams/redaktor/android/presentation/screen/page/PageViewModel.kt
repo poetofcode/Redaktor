@@ -25,20 +25,19 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
                     elements = elementsUI
                 ) }
             }
-            .catch { e ->
-                e.printStackTrace()
-            }
+            .catch { e -> e.printStackTrace() }
             .launchIn(viewModelScope)
     }
 
     override fun handleIntent(intent: PageIntent) {
         when (intent) {
             PageIntent.SomeUserIntent -> {
+                /*
                 println("mylog Intent: $intent")
-
                 updateState { copy(
                     textState = state.value.textState + " NEW"
                 ) }
+                */
             }
             PageIntent.ToSampleScreen -> {
                 offerEffect(NavigationEffect.Navigate(RootScreen.SampleScreen))
@@ -53,6 +52,9 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
                     mode = PageMode.EDIT,
                 ) }
             }
+            is PageIntent.OnActionClick -> {
+                println("mylog On action click: ${intent.element}")
+            }
         }
     }
 
@@ -62,7 +64,7 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
         return items.map {
             when (val element = it) {
                 is TextElement -> {
-                    ElementUI(text = element.text)
+                    ElementUI.Text(text = element.text)
                 }
 
                 else -> {
@@ -76,7 +78,7 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
 }
 
 sealed class PageIntent : Intent {
-
+    data class OnActionClick(val element: ElementUI) : PageIntent()
     object SomeUserIntent : PageIntent()
     object ToSampleScreen : PageIntent()
     object OnStartEditModeClick : PageIntent()
@@ -90,9 +92,25 @@ data class PageState(
     val mode: PageMode = PageMode.VIEW,
 ) : State
 
-data class ElementUI(
-    val text: String,
-)
+
+sealed class ActionUI {
+    object Edit : ActionUI()
+    object Delete : ActionUI()
+
+    companion object {
+        val BY_DEFAULT = listOf(Edit, Delete)
+    }
+}
+
+sealed class ElementUI {
+
+    data class Text(
+        val text: String,
+        val actions: List<ActionUI> = ActionUI.BY_DEFAULT
+    ) : ElementUI()
+
+}
+
 
 enum class PageMode {
     VIEW, EDIT
