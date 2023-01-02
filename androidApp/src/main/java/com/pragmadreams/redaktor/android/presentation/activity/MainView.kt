@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -30,29 +31,20 @@ class MainView : ComposeView<PageState, PageIntent>() {
     @Composable
     private fun ElementList() {
         val paddingVert = 20.dp
-        val paddHor = 100.dp
+        val paddHor = 16.dp
 
         val state = LocalState.current
         val offerIntent = LocalIntent.current
 
         LazyColumn {
-            repeat(20) {
-                item {
-                    Surface(
-                        modifier = Modifier
-                            .padding(20.dp)
-                            .border(1.dp, Color.Gray)
-                            .clickable { offerIntent(PageIntent.ToSampleScreen) },
-                    ) {
-                        Text(
-                            text = LocalState.current.textState,
-                            modifier = Modifier.padding(
-                                horizontal = paddHor,
-                                vertical = paddingVert
-                            )
-                        )
-                    }
-                }
+            items(state.elements) {
+                Text(
+                    text = it.text,
+                    modifier = Modifier.padding(
+                        horizontal = paddHor,
+                        vertical = paddingVert
+                    )
+                )
             }
         }
     }
@@ -65,13 +57,24 @@ class MainView : ComposeView<PageState, PageIntent>() {
                 .height(54.dp)
                 .fillMaxWidth()
         ) {
+            val state = LocalState.current
             val offerIntent = LocalIntent.current
 
-            Button(modifier = Modifier.padding(12.dp),
-                onClick = {
-                    offerIntent(PageIntent.SomeUserIntent)
-                }) {
-                Text(text = "Test")
+            val buttonParams: Pair<String, () -> Unit> = when (state.mode) {
+                PageMode.VIEW -> {
+                    Pair("Ред.") { offerIntent(PageIntent.OnStartEditModeClick) }
+                }
+                PageMode.EDIT -> {
+                    Pair("Закрыть") { offerIntent(PageIntent.OnFinishEditModeClick) }
+                }
+                else -> {
+                    Pair("...") {}
+                }
+            }
+
+            Button(modifier = Modifier.padding(horizontal = 12.dp),
+                onClick = buttonParams.second) {
+                Text(text = buttonParams.first)
             }
 
             Spacer(modifier = Modifier.weight(1f))
