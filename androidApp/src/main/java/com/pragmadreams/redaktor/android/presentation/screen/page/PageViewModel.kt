@@ -54,6 +54,12 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
             PageIntent.OnApplyElementChangesClick -> {
                 // TODO
             }
+            PageIntent.OnDiscardChangesElementClick -> {
+                updateState { copy(
+                    mode = PageMode.SELECT,
+                    editableElement = null,
+                ) }
+            }
         }
     }
 
@@ -95,6 +101,7 @@ sealed class PageIntent : Intent {
     object OnStartEditModeClick : PageIntent()
     object OnFinishEditModeClick : PageIntent()
     object OnApplyElementChangesClick : PageIntent()
+    object OnDiscardChangesElementClick : PageIntent()
 }
 
 data class PageState(

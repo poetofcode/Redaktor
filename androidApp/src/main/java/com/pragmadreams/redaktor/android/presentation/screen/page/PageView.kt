@@ -6,17 +6,16 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.pragmadreams.redaktor.android.base.ComposeView
 
@@ -27,15 +26,22 @@ class PageView : ComposeView<PageState, PageIntent>() {
     override fun Layout() {
         Column {
             Toolbar()
-            ElementList()
-            FloatingToolbar()
+            Box(Modifier.fillMaxSize()) {
+                val floatingToolbarHeight = 50.dp
+                ElementList(contentPaddingBottom = floatingToolbarHeight)
+                FloatingToolbar(
+                    Modifier
+                        .height(floatingToolbarHeight)
+                        .align(Alignment.BottomCenter)
+                )
+            }
         }
     }
 
     @Composable
-    private fun ElementList() {
+    private fun ElementList(contentPaddingBottom: Dp) {
         val state = LocalState.current
-        LazyColumn {
+        LazyColumn(contentPadding = PaddingValues(bottom = contentPaddingBottom)) {
             items(state.elements) {
                 ElementItem(it)
             }
@@ -86,17 +92,28 @@ class PageView : ComposeView<PageState, PageIntent>() {
     @Composable
     private fun ActionItem(action: ActionUI, element: ElementUI) {
         val offerIntent = LocalOfferIntent.current
-        Box(modifier = Modifier
-            .clickable {
-                offerIntent(PageIntent.OnActionClick(element, action))
+        ActionButton(
+            imageVector = when (action) {
+                ActionUI.Delete -> Icons.Filled.Delete
+                ActionUI.Edit -> Icons.Filled.Edit
             }
+        ) {
+            offerIntent(PageIntent.OnActionClick(element, action))
+        }
+    }
+
+    @Composable
+    private fun ActionButton(
+        modifier: Modifier = Modifier,
+        imageVector: ImageVector,
+        onClick: () -> Unit
+    ) {
+        Box(modifier = modifier
+            .clickable { onClick() }
             .border(width = 1.dp, color = Color.LightGray)
             .padding(5.dp)) {
             Icon(
-                imageVector = when (action) {
-                    ActionUI.Delete -> Icons.Filled.Delete
-                    ActionUI.Edit -> Icons.Filled.Edit
-                },
+                imageVector = imageVector,
                 contentDescription = null
             )
         }
@@ -145,28 +162,25 @@ class PageView : ComposeView<PageState, PageIntent>() {
     }
 
     @Composable
-    fun FloatingToolbar() {
+    private fun FloatingToolbar(modifier: Modifier) {
         val state = LocalState.current
+        val offerIntent = LocalOfferIntent.current
         when (state.mode) {
             PageMode.EDIT -> {
                 Row(
-                    Modifier
+                    modifier
                         .fillMaxWidth()
-                        .height(40.dp)
-                        .background(Color.Cyan),
+                        .background(Color.Cyan)
+                        .padding(horizontal = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.Cancel,
-                        contentDescription = null,
-                        modifier = Modifier.padding(horizontal = 5.dp)
-                    )
+                    ActionButton(imageVector = Icons.Filled.Cancel) {
+                        offerIntent(PageIntent.OnDiscardChangesElementClick)
+                    }
                     Spacer(modifier = Modifier.weight(1f))
-                    Icon(
-                        imageVector = Icons.Filled.Done,
-                        contentDescription = null,
-                        modifier = Modifier.padding(horizontal = 5.dp)
-                    )
+                    ActionButton(imageVector = Icons.Filled.Done) {
+                        offerIntent(PageIntent.OnApplyElementChangesClick)
+                    }
                 }
             }
             else -> Unit
@@ -177,7 +191,9 @@ class PageView : ComposeView<PageState, PageIntent>() {
     @Composable
     fun DefaultPreview() {
         val previewState = PageState(
-            textState = "test state"
+            textState = "test state",
+            elements = emptyList(),
+            mode = PageMode.EDIT,
         )
         PageView().Content(previewState)
     }
