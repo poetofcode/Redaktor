@@ -43,17 +43,28 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
                 offerEffect(NavigationEffect.Navigate(RootScreen.SampleScreen))
             }
             PageIntent.OnFinishEditModeClick -> {
-                updateState { copy(
-                    mode = PageMode.VIEW,
-                ) }
+                updateState { copy(mode = PageMode.VIEW) }
             }
             PageIntent.OnStartEditModeClick -> {
-                updateState { copy(
-                    mode = PageMode.EDIT,
-                ) }
+                updateState { copy(mode = PageMode.SELECT) }
             }
             is PageIntent.OnActionClick -> {
-                println("mylog On action click: ${intent.element}")
+                handleActionClick(intent.element, intent.action)
+            }
+            PageIntent.OnApplyElementChangesClick -> {
+                // TODO
+            }
+        }
+    }
+
+    private fun handleActionClick(element: ElementUI, action: ActionUI) {
+        when (action) {
+            ActionUI.Delete -> { /* TODO */ }
+            ActionUI.Edit -> {
+                updateState { copy(
+                    mode = PageMode.EDIT,
+                    editableElement = element,
+                ) }
             }
         }
     }
@@ -78,18 +89,19 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
 }
 
 sealed class PageIntent : Intent {
-    data class OnActionClick(val element: ElementUI) : PageIntent()
+    data class OnActionClick(val element: ElementUI, val action: ActionUI) : PageIntent()
     object SomeUserIntent : PageIntent()
     object ToSampleScreen : PageIntent()
     object OnStartEditModeClick : PageIntent()
     object OnFinishEditModeClick : PageIntent()
-
+    object OnApplyElementChangesClick : PageIntent()
 }
 
 data class PageState(
     val textState: String = "Page UI state",
     val elements: List<ElementUI> = emptyList(),
     val mode: PageMode = PageMode.VIEW,
+    val editableElement: ElementUI? = null,
 ) : State
 
 
@@ -113,5 +125,5 @@ sealed class ElementUI {
 
 
 enum class PageMode {
-    VIEW, EDIT
+    VIEW, SELECT, EDIT
 }

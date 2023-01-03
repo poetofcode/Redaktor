@@ -11,13 +11,11 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pragmadreams.redaktor.android.base.ComposeView
@@ -30,6 +28,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
         Column {
             Toolbar()
             ElementList()
+            FloatingToolbar()
         }
     }
 
@@ -61,7 +60,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
 
                     // Actions with divider
                     when (LocalState.current.mode) {
-                        PageMode.EDIT -> {
+                        PageMode.SELECT -> {
                             Divider(
                                 thickness = 1.dp,
                                 color = Color.LightGray,
@@ -89,7 +88,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
         val offerIntent = LocalOfferIntent.current
         Box(modifier = Modifier
             .clickable {
-                offerIntent(PageIntent.OnActionClick(element))
+                offerIntent(PageIntent.OnActionClick(element, action))
             }
             .border(width = 1.dp, color = Color.LightGray)
             .padding(5.dp)) {
@@ -118,8 +117,11 @@ class PageView : ComposeView<PageState, PageIntent>() {
                 PageMode.VIEW -> {
                     Pair("Ред.") { offerIntent(PageIntent.OnStartEditModeClick) }
                 }
-                PageMode.EDIT -> {
+                PageMode.SELECT -> {
                     Pair("Просмотр") { offerIntent(PageIntent.OnFinishEditModeClick) }
+                }
+                PageMode.EDIT -> {
+                    Pair("Сохранить") { offerIntent(PageIntent.OnApplyElementChangesClick) }
                 }
             }
 
@@ -139,6 +141,35 @@ class PageView : ComposeView<PageState, PageIntent>() {
                     .padding(horizontal = 20.dp),
                 color = Color.Black
             )
+        }
+    }
+
+    @Composable
+    fun FloatingToolbar() {
+        val state = LocalState.current
+        when (state.mode) {
+            PageMode.EDIT -> {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                        .background(Color.Cyan),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Cancel,
+                        contentDescription = null,
+                        modifier = Modifier.padding(horizontal = 5.dp)
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Icon(
+                        imageVector = Icons.Filled.Done,
+                        contentDescription = null,
+                        modifier = Modifier.padding(horizontal = 5.dp)
+                    )
+                }
+            }
+            else -> Unit
         }
     }
 
