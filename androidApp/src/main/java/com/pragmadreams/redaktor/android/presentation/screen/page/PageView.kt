@@ -1,6 +1,5 @@
 package com.pragmadreams.redaktor.android.presentation.screen.page
 
-import androidx.compose.animation.expandIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -9,10 +8,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,11 +31,22 @@ class PageView : ComposeView<PageState, PageIntent>() {
 
     @Composable
     override fun Layout() {
+        val focusRequester = remember { FocusRequester() }
+
+        // TODO Запилить что-то вроде CollectEffects и в нём обозревать эффект на старт редактирования
+        //      текстового элемента: OnTextElementStartEditingEffect
+        //      по нему делать: focusRequester.requestFocus()
+        //
+        //      TODO АКТУАЛЬНО ЛИ ДАННОЕ TO_DO ???
+
         Column {
             Toolbar()
             Box(Modifier.fillMaxSize()) {
                 val floatingToolbarHeight = 50.dp
-                ElementList(contentPaddingBottom = floatingToolbarHeight)
+                ElementList(
+                    contentPaddingBottom = floatingToolbarHeight,
+                    focusRequester = focusRequester
+                )
                 FloatingToolbar(
                     Modifier
                         .height(floatingToolbarHeight)
@@ -40,17 +57,17 @@ class PageView : ComposeView<PageState, PageIntent>() {
     }
 
     @Composable
-    private fun ElementList(contentPaddingBottom: Dp) {
+    private fun ElementList(contentPaddingBottom: Dp, focusRequester: FocusRequester) {
         val state = LocalState.current
         LazyColumn(contentPadding = PaddingValues(bottom = contentPaddingBottom)) {
             items(state.elements) {
-                ElementItem(it)
+                ElementItem(it, focusRequester)
             }
         }
     }
 
     @Composable
-    private fun ElementItem(element: ElementUI) {
+    private fun ElementItem(element: ElementUI, focusRequester: FocusRequester) {
         val paddingVert = 20.dp
         val paddHor = 16.dp
         val offerIntent = LocalOfferIntent.current
@@ -60,14 +77,19 @@ class PageView : ComposeView<PageState, PageIntent>() {
             when (element) {
                 is ElementUI.Text -> {
                     if (editableElement is ElementUI.Text && editableElement.id == element.id) {
-                        TextField(
-                            modifier = Modifier.fillMaxWidth(),
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(focusRequester),
                             value = editableElement.text,
                             onValueChange = {
                                 offerIntent(
                                     PageIntent.OnEditableElementChanged(editableElement.copy(text = it))
                                 )
                             })
+                        LaunchedEffect(Unit) {
+                            focusRequester.requestFocus()
+                        }
                     } else {
                         Text(
                             text = element.text,
