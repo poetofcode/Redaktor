@@ -1,5 +1,6 @@
 package com.pragmadreams.redaktor.android.presentation.screen.page
 
+import androidx.compose.animation.expandIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -53,16 +54,29 @@ class PageView : ComposeView<PageState, PageIntent>() {
         val paddingVert = 20.dp
         val paddHor = 16.dp
         val offerIntent = LocalOfferIntent.current
+        val state = LocalState.current
+        val editableElement = state.editableElement
         Column {
             when (element) {
                 is ElementUI.Text -> {
-                    Text(
-                        text = element.text,
-                        modifier = Modifier.padding(
-                            horizontal = paddHor,
-                            vertical = paddingVert
+                    if (editableElement is ElementUI.Text && editableElement.id == element.id) {
+                        TextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            value = editableElement.text,
+                            onValueChange = {
+                                offerIntent(
+                                    PageIntent.OnEditableElementChanged(editableElement.copy(text = it))
+                                )
+                            })
+                    } else {
+                        Text(
+                            text = element.text,
+                            modifier = Modifier.padding(
+                                horizontal = paddHor,
+                                vertical = paddingVert
+                            )
                         )
-                    )
+                    }
 
                     // Actions with divider
                     when (LocalState.current.mode) {

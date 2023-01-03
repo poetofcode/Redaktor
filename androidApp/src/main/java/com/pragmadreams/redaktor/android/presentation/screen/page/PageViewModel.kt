@@ -60,6 +60,9 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
                     editableElement = null,
                 ) }
             }
+            is PageIntent.OnEditableElementChanged -> {
+                updateState { copy(editableElement = intent.updatedElement) }
+            }
         }
     }
 
@@ -81,7 +84,7 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
         return items.map {
             when (val element = it) {
                 is TextElement -> {
-                    ElementUI.Text(text = element.text)
+                    ElementUI.Text(text = element.text, id = element.id)
                 }
 
                 else -> {
@@ -96,6 +99,7 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
 
 sealed class PageIntent : Intent {
     data class OnActionClick(val element: ElementUI, val action: ActionUI) : PageIntent()
+    data class OnEditableElementChanged(val updatedElement: ElementUI) : PageIntent()
     object SomeUserIntent : PageIntent()
     object ToSampleScreen : PageIntent()
     object OnStartEditModeClick : PageIntent()
@@ -121,12 +125,13 @@ sealed class ActionUI {
     }
 }
 
-sealed class ElementUI {
+sealed class ElementUI(open val id: String) {
 
     data class Text(
+        override val id: String,
         val text: String,
         val actions: List<ActionUI> = ActionUI.BY_DEFAULT
-    ) : ElementUI()
+    ) : ElementUI(id)
 
 }
 
