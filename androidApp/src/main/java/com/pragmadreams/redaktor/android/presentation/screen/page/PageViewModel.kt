@@ -15,18 +15,11 @@ import kotlinx.coroutines.flow.onEach
 
 class PageViewModel : BaseViewModel<PageState, PageIntent>() {
 
+    private val pageId = "1"
     private val useCase = UseCases.editorUseCase
 
     init {
-        useCase.fetchPageById("1")
-            .onEach {
-                val elementsUI = fromElementsApi(it.elements)
-                updateState { copy(
-                    elements = elementsUI
-                ) }
-            }
-            .catch { e -> e.printStackTrace() }
-            .launchIn(viewModelScope)
+        fetchPageData()
     }
 
     override fun handleIntent(intent: PageIntent) {
@@ -52,7 +45,7 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
                 handleActionClick(intent.element, intent.action)
             }
             PageIntent.OnApplyElementChangesClick -> {
-                // TODO
+                applyElementChanges()
             }
             PageIntent.OnDiscardChangesElementClick -> {
                 updateState { copy(
@@ -64,6 +57,30 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
                 updateState { copy(editableElement = intent.updatedElement) }
             }
         }
+    }
+
+    private fun applyElementChanges() {
+        val editableElement = state.value.editableElement ?: return
+        useCase.createOrUpdateElement(pageId, toElementApi(editableElement))
+            .onEach {
+                fetchPageData()
+                updateState { copy(
+                    mode = PageMode.SELECT,
+                    editableElement = null,
+                ) }
+            }
+            .catch { e -> e.printStackTrace() }
+            .launchIn(viewModelScope)
+    }
+
+    private fun fetchPageData() {
+        useCase.fetchPageById(pageId)
+            .onEach {
+                val elementsUI = fromElementsApi(it.elements)
+                updateState { copy(elements = elementsUI) }
+            }
+            .catch { e -> e.printStackTrace() }
+            .launchIn(viewModelScope)
     }
 
     private fun handleActionClick(element: ElementUI, action: ActionUI) {
@@ -92,6 +109,15 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
                     return emptyList()
                 }
             }
+        }
+    }
+
+    private fun toElementApi(elementUi: ElementUI) : Element {
+        when (elementUi) {
+            is ElementUI.Text -> return TextElement(
+                id = elementUi.id,
+                text = elementUi.text,
+            )
         }
     }
 
