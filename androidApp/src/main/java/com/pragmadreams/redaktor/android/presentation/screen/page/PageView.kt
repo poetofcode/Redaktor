@@ -36,7 +36,8 @@ class PageView : ComposeView<PageState, PageIntent>() {
         // TODO Запилить что-то вроде CollectEffects и в нём обозревать эффект на старт редактирования
         //      текстового элемента: OnTextElementStartEditingEffect
         //      по нему делать: focusRequester.requestFocus()
-        //
+        //      https://stackoverflow.com/questions/64181930/request-focus-on-textfield-in-jetpack-compose
+
         //      TODO АКТУАЛЬНО ЛИ ДАННОЕ TO_DO ???
 
         Column {

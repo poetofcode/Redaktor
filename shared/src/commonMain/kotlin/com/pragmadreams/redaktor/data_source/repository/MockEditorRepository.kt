@@ -6,7 +6,7 @@ import com.pragmadreams.redaktor.entity.Page
 import com.pragmadreams.redaktor.entity.TextElement
 
 internal class MockEditorRepository : EditorRepository {
-    private val testPage = Page(
+    private var testPage = Page(
         id = "1",
         title = "Test page",
         elements = listOf(
@@ -34,7 +34,21 @@ internal class MockEditorRepository : EditorRepository {
     }
 
     override suspend fun createOrUpdateElement(pageId: String, element: Element) {
-        TODO("Not yet implemented")
+        if (testPage.elements.indexOfFirst { it.id == element.id } < 0) {
+            testPage = testPage.copy(
+                elements = testPage.elements.toMutableList().apply { add(element) }.toList()
+            )
+            return
+        }
+        testPage = testPage.copy(
+            elements = testPage.elements.map { item ->
+                if (item.id != element.id) {
+                    item
+                } else {
+                    element
+                }
+            }
+        )
     }
 
     override suspend fun deleteElement(pageId: String, elementId: String) {
