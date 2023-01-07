@@ -134,12 +134,12 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
     }
 
     private fun toElementApi(elementUi: ElementUI): Element {
-        when (elementUi) {
-            is ElementUI.Text -> return TextElement(
+        return when (elementUi) {
+            is ElementUI.Text -> TextElement(
                 id = elementUi.id,
                 text = elementUi.text,
             )
-            is ElementUI.Link -> return LinkElement(
+            is ElementUI.Link -> LinkElement(
                 id = elementUi.id,
                 text = elementUi.text,
                 relatedPageId = elementUi.relatedPageId,

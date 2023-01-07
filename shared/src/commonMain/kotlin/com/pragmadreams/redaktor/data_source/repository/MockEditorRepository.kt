@@ -54,21 +54,22 @@ internal class MockEditorRepository : EditorRepository {
             ),
         )
     )
-    val pages = mutableListOf(testPage, testPage2)
+    var pages = listOf(testPage, testPage2)
 
     override suspend fun fetchPageById(pageId: String): Page {
         return pages.first { it.id == pageId }
     }
 
     override suspend fun createOrUpdateElement(pageId: String, element: Element) {
-        if (testPage.elements.indexOfFirst { it.id == element.id } < 0) {
-            testPage = testPage.copy(
-                elements = testPage.elements.toMutableList().apply { add(element) }.toList()
+        var found = pages.first { it.id == pageId }
+        if (found.elements.indexOfFirst { it.id == element.id } < 0) {
+            found = found.copy(
+                elements = found.elements.toMutableList().apply { add(element) }.toList()
             )
             return
         }
-        testPage = testPage.copy(
-            elements = testPage.elements.map { item ->
+        found = found.copy(
+            elements = found.elements.map { item ->
                 if (item.id != element.id) {
                     item
                 } else {
@@ -76,6 +77,13 @@ internal class MockEditorRepository : EditorRepository {
                 }
             }
         )
+        pages = pages.map {
+            if (it.id == pageId) {
+                found
+            } else {
+                it
+            }
+        }
     }
 
     override suspend fun deleteElement(pageId: String, elementId: String) {
