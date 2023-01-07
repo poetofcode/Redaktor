@@ -102,16 +102,12 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
     override fun createState(): PageState = PageState()
 
     private fun fromElementsApi(items: List<Element>) : List<ElementUI> {
-        return items.map {
+        return items.mapNotNull {
             when (val element = it) {
                 is TextElement -> {
                     ElementUI.Text(text = element.text, id = element.id)
                 }
-
-                else -> {
-                    // TODO remove emptyList and remove single item from list
-                    return emptyList()
-                }
+                else -> null
             }
         }
     }
