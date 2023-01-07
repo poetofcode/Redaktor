@@ -8,10 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -100,28 +97,62 @@ class PageView : ComposeView<PageState, PageIntent>() {
                             )
                         )
                     }
-
-                    // Actions with divider
-                    when (LocalState.current.mode) {
-                        PageMode.Select -> {
-                            Divider(
-                                thickness = 1.dp,
-                                color = Color.LightGray,
-                                modifier = Modifier.padding(horizontal = paddHor)
-                            )
-
-                            Row(
-                                modifier = Modifier.padding(horizontal = paddHor),
-                            ) {
-                                Spacer(Modifier.weight(1f))
-                                listOf(ActionUI.Edit, ActionUI.Delete).forEach {
-                                    ActionItem(action = it, element = element)
-                                }
-                            }
+                }
+                is ElementUI.Link -> {
+                    if (editableElement is ElementUI.Link && editableElement.id == element.id) {
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(focusRequester),
+                            value = editableElement.text,
+                            onValueChange = {
+                                offerIntent(
+                                    PageIntent.OnEditableElementChanged(editableElement.copy(text = it))
+                                )
+                            })
+                        LaunchedEffect(Unit) {
+                            focusRequester.requestFocus()
                         }
-                        else -> Unit
+                    } else {
+                        Row(
+                            Modifier.padding(
+                                horizontal = paddHor,
+                                vertical = paddingVert
+                            ), verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = element.text,
+                                modifier = Modifier.weight(1f),
+                            )
+                            Icon(
+                                modifier = Modifier.padding(start = 10.dp),
+                                imageVector = Icons.Filled.ArrowRight,
+                                contentDescription = null
+                            )
+                        }
                     }
                 }
+            }
+
+            // Actions with divider
+            when (LocalState.current.mode) {
+                PageMode.Select -> {
+                    Divider(
+                        thickness = 1.dp,
+                        color = Color.LightGray,
+                        modifier = Modifier.padding(horizontal = paddHor)
+                    )
+
+                    Row(
+                        modifier = Modifier.padding(horizontal = paddHor),
+                    ) {
+                        Spacer(Modifier.weight(1f))
+                        listOf(ActionUI.Edit, ActionUI.Delete).forEach {
+                            ActionItem(action = it, element = element)
+                        }
+                    }
+                }
+                else -> Unit
             }
         }
     }
@@ -133,6 +164,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
             imageVector = when (action) {
                 ActionUI.Delete -> Icons.Filled.Delete
                 ActionUI.Edit -> Icons.Filled.Edit
+                ActionUI.BindLink -> Icons.Filled.Link
             }
         ) {
             offerIntent(PageIntent.OnActionClick(element, action))

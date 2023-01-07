@@ -13,5 +13,5 @@ data class TextElement(
 data class LinkElement(
     override val id: String,
     val text: String,
-    val relatedPageId: String,
+    val relatedPageId: String?,
 ) : Element(id)

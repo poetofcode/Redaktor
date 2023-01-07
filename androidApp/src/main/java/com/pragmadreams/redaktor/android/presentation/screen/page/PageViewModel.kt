@@ -8,6 +8,7 @@ import com.pragmadreams.redaktor.android.domain.UseCases
 import com.pragmadreams.redaktor.android.navigation.NavigationEffect
 import com.pragmadreams.redaktor.android.navigation.RootScreen
 import com.pragmadreams.redaktor.entity.Element
+import com.pragmadreams.redaktor.entity.LinkElement
 import com.pragmadreams.redaktor.entity.TextElement
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
@@ -48,14 +49,18 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
                 applyElementChanges()
             }
             PageIntent.OnDiscardChangesElementClick -> {
-                updateState { copy(
-                    mode = PageMode.Select,
-                ) }
+                updateState {
+                    copy(
+                        mode = PageMode.Select,
+                    )
+                }
             }
             is PageIntent.OnEditableElementChanged -> {
-                updateState { copy(
-                    mode = PageMode.Edit(intent.updatedElement)
-                ) }
+                updateState {
+                    copy(
+                        mode = PageMode.Edit(intent.updatedElement)
+                    )
+                }
             }
         }
     }
@@ -67,9 +72,11 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
                 useCase.createOrUpdateElement(pageId, toElementApi(editableElement))
                     .onEach {
                         fetchPageData()
-                        updateState { copy(
-                            mode = PageMode.Select,
-                        ) }
+                        updateState {
+                            copy(
+                                mode = PageMode.Select,
+                            )
+                        }
                     }
                     .catch { e -> e.printStackTrace() }
                     .launchIn(viewModelScope)
@@ -90,33 +97,52 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
 
     private fun handleActionClick(element: ElementUI, action: ActionUI) {
         when (action) {
-            ActionUI.Delete -> { /* TODO */ }
+            ActionUI.Delete -> { /* TODO */
+            }
             ActionUI.Edit -> {
-                updateState { copy(
-                    mode = PageMode.Edit(element),
-                ) }
+                updateState {
+                    copy(
+                        mode = PageMode.Edit(element),
+                    )
+                }
+            }
+            ActionUI.BindLink -> {
+                // TODO navigate to page-list/choose-page screen
             }
         }
     }
 
     override fun createState(): PageState = PageState()
 
-    private fun fromElementsApi(items: List<Element>) : List<ElementUI> {
+    private fun fromElementsApi(items: List<Element>): List<ElementUI> {
         return items.mapNotNull {
             when (val element = it) {
                 is TextElement -> {
                     ElementUI.Text(text = element.text, id = element.id)
+                }
+
+                is LinkElement -> {
+                    ElementUI.Link(
+                        text = element.text,
+                        id = element.id,
+                        relatedPageId = element.relatedPageId
+                    )
                 }
                 else -> null
             }
         }
     }
 
-    private fun toElementApi(elementUi: ElementUI) : Element {
+    private fun toElementApi(elementUi: ElementUI): Element {
         when (elementUi) {
             is ElementUI.Text -> return TextElement(
                 id = elementUi.id,
                 text = elementUi.text,
+            )
+            is ElementUI.Link -> return LinkElement(
+                id = elementUi.id,
+                text = elementUi.text,
+                relatedPageId = elementUi.relatedPageId,
             )
         }
     }
@@ -144,24 +170,35 @@ data class PageState(
 sealed class ActionUI {
     object Edit : ActionUI()
     object Delete : ActionUI()
+    object BindLink : ActionUI()
 
     companion object {
         val BY_DEFAULT: List<ActionUI> = emptyList()
     }
 }
 
-sealed class ElementUI(open val id: String) {
+sealed class ElementUI(
+    open val id: String,
+    open val actions: List<ActionUI> = ActionUI.BY_DEFAULT,
+) {
 
     data class Text(
         override val id: String,
         val text: String,
-        val actions: List<ActionUI> = ActionUI.BY_DEFAULT
     ) : ElementUI(id)
+
+    data class Link(
+        override val id: String,
+        val text: String,
+        val relatedPageId: String?,
+    ) : ElementUI(id) {
+        override val actions: List<ActionUI> = listOf(ActionUI.BindLink)
+    }
 
 }
 
 sealed class PageMode {
     object View : PageMode()
-    object Select: PageMode()
+    object Select : PageMode()
     data class Edit(val element: ElementUI) : PageMode()
 }

@@ -32,6 +32,11 @@ internal class MockEditorRepository : EditorRepository {
                 id = "5",
                 text = "Минималистичным интерфейсом (идея = больше контента - лучше)"
             ),
+            LinkElement(
+                id = "7",
+                text = "Ссылка без привязки",
+                relatedPageId = null,
+            ),
         )
     )
     private var testPage2 = Page(
