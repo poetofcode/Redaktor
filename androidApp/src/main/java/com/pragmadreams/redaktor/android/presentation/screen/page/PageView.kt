@@ -114,7 +114,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
                                 modifier = Modifier.padding(horizontal = paddHor),
                             ) {
                                 Spacer(Modifier.weight(1f))
-                                element.actions.forEach {
+                                listOf(ActionUI.Edit, ActionUI.Delete).forEach {
                                     ActionItem(action = it, element = element)
                                 }
                             }

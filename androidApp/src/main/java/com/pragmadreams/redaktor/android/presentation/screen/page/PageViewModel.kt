@@ -142,7 +142,6 @@ data class PageState(
     val textState: String = "Page UI state",
     val elements: List<ElementUI> = emptyList(),
     val mode: PageMode = PageMode.View,
-    // val editableElement: ElementUI? = null,
 ) : State
 
 
@@ -151,7 +150,7 @@ sealed class ActionUI {
     object Delete : ActionUI()
 
     companion object {
-        val BY_DEFAULT = listOf(Edit, Delete)
+        val BY_DEFAULT: List<ActionUI> = emptyList()
     }
 }
 
