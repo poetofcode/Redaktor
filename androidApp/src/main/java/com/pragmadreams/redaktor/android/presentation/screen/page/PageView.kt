@@ -22,6 +22,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.colorspace.Rgb
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -104,16 +105,43 @@ class PageView : ComposeView<PageState, PageIntent>() {
                 }
                 is ElementUI.Link -> {
                     if (editableElement is ElementUI.Link && editableElement.id == element.id) {
-                        OutlinedTextField(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .focusRequester(focusRequester),
-                            value = editableElement.text,
-                            onValueChange = {
-                                offerIntent(
-                                    PageIntent.OnEditableElementChanged(editableElement.copy(text = it))
+                        Column(Modifier.fillMaxWidth()) {
+                            OutlinedTextField(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .focusRequester(focusRequester),
+                                value = editableElement.text,
+                                onValueChange = {
+                                    offerIntent(
+                                        PageIntent.OnEditableElementChanged(
+                                            editableElement.copy(
+                                                text = it
+                                            )
+                                        )
+                                    )
+                                })
+
+                            Row(Modifier.padding(10.dp)) {
+                                val color = if (element.isBound) Color(0, 200, 0, 255) else Color.Gray
+                                Icon(
+                                    modifier = Modifier.size(18.dp),
+                                    imageVector = if (element.isBound) Icons.Filled.Link else Icons.Filled.LinkOff,
+                                    contentDescription = null,
+                                    tint = color,
                                 )
-                            })
+                                Text(
+                                    text = if (element.isBound) {
+                                        "Ссылка установлена"
+                                    } else {
+                                        "Ссылка не задана"
+                                    },
+                                    modifier = Modifier.padding(start = 10.dp),
+                                    fontStyle = FontStyle.Italic,
+                                    color = color,
+                                )
+                            }
+
+                        }
                         LaunchedEffect(Unit) {
                             focusRequester.requestFocus()
                         }
@@ -132,7 +160,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
                             )
                             Icon(
                                 modifier = Modifier.padding(start = 10.dp),
-                                imageVector = if (element.isBound) Icons.Filled.ArrowForward else Icons.Filled.Link,
+                                imageVector = if (element.isBound) Icons.Filled.ArrowForward else Icons.Filled.LinkOff,
                                 contentDescription = null
                             )
                         }
