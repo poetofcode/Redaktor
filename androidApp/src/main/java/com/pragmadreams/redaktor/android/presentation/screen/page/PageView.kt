@@ -6,9 +6,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.ArrowCircleRight
+import androidx.compose.material.icons.outlined.ArrowRightAlt
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -17,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.colorspace.Rgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -115,10 +119,12 @@ class PageView : ComposeView<PageState, PageIntent>() {
                         }
                     } else {
                         Row(
-                            Modifier.padding(
-                                horizontal = paddHor,
-                                vertical = paddingVert
-                            ), verticalAlignment = Alignment.CenterVertically
+                            Modifier
+                                .padding(
+                                    horizontal = paddHor,
+                                    vertical = paddingVert
+                                ),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
                                 text = element.text,
@@ -126,7 +132,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
                             )
                             Icon(
                                 modifier = Modifier.padding(start = 10.dp),
-                                imageVector = Icons.Filled.ArrowRight,
+                                imageVector = if (element.isBound) Icons.Filled.ArrowForward else Icons.Filled.Link,
                                 contentDescription = null
                             )
                         }

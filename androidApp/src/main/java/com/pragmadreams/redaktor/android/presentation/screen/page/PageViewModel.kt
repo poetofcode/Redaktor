@@ -193,6 +193,11 @@ sealed class ElementUI(
         val relatedPageId: String?,
     ) : ElementUI(id) {
         override val actions: List<ActionUI> = listOf(ActionUI.BindLink)
+
+        val isBound: Boolean
+            get() {
+                return relatedPageId != null
+            }
     }
 
 }
