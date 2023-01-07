@@ -270,6 +270,8 @@ class PageView : ComposeView<PageState, PageIntent>() {
         val offerIntent = LocalOfferIntent.current
         when (state.mode) {
             is PageMode.Edit -> {
+                val element = state.mode.element
+                val actions = state.mode.element.actions
                 Row(
                     modifier
                         .fillMaxWidth()
@@ -281,6 +283,11 @@ class PageView : ComposeView<PageState, PageIntent>() {
                         offerIntent(PageIntent.OnDiscardChangesElementClick)
                     }
                     Spacer(modifier = Modifier.weight(1f))
+                    // Row of dynamic actions
+                    actions.forEach {
+                        ActionItem(action = it, element = element)
+                    }
+                    Spacer(modifier = Modifier.size(10.dp))
                     ActionButton(imageVector = Icons.Filled.Done) {
                         offerIntent(PageIntent.OnApplyElementChangesClick)
                     }
