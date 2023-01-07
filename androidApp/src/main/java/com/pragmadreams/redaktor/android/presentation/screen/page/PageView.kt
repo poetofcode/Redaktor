@@ -73,7 +73,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
         val paddHor = 16.dp
         val offerIntent = LocalOfferIntent.current
         val state = LocalState.current
-        val editableElement = state.editableElement
+        val editableElement: ElementUI? = (state.mode as? PageMode.Edit)?.element
         Column {
             when (element) {
                 is ElementUI.Text -> {
@@ -103,7 +103,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
 
                     // Actions with divider
                     when (LocalState.current.mode) {
-                        PageMode.SELECT -> {
+                        PageMode.Select -> {
                             Divider(
                                 thickness = 1.dp,
                                 color = Color.LightGray,
@@ -168,13 +168,13 @@ class PageView : ComposeView<PageState, PageIntent>() {
             val offerIntent = LocalOfferIntent.current
 
             val buttonParams: Pair<String, () -> Unit> = when (state.mode) {
-                PageMode.VIEW -> {
+                PageMode.View -> {
                     Pair("Ред.") { offerIntent(PageIntent.OnStartEditModeClick) }
                 }
-                PageMode.SELECT -> {
+                PageMode.Select -> {
                     Pair("Просмотр") { offerIntent(PageIntent.OnFinishEditModeClick) }
                 }
-                PageMode.EDIT -> {
+                is PageMode.Edit -> {
                     Pair("Сохранить") { offerIntent(PageIntent.OnApplyElementChangesClick) }
                 }
             }
@@ -203,7 +203,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
         val state = LocalState.current
         val offerIntent = LocalOfferIntent.current
         when (state.mode) {
-            PageMode.EDIT -> {
+            is PageMode.Edit -> {
                 Row(
                     modifier
                         .fillMaxWidth()
@@ -230,7 +230,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
         val previewState = PageState(
             textState = "test state",
             elements = emptyList(),
-            mode = PageMode.EDIT,
+            mode = PageMode.View,
         )
         PageView().Content(previewState)
     }

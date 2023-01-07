@@ -36,10 +36,10 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
                 offerEffect(NavigationEffect.Navigate(RootScreen.SampleScreen))
             }
             PageIntent.OnFinishEditModeClick -> {
-                updateState { copy(mode = PageMode.VIEW) }
+                updateState { copy(mode = PageMode.View) }
             }
             PageIntent.OnStartEditModeClick -> {
-                updateState { copy(mode = PageMode.SELECT) }
+                updateState { copy(mode = PageMode.Select) }
             }
             is PageIntent.OnActionClick -> {
                 handleActionClick(intent.element, intent.action)
@@ -49,28 +49,33 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
             }
             PageIntent.OnDiscardChangesElementClick -> {
                 updateState { copy(
-                    mode = PageMode.SELECT,
-                    editableElement = null,
+                    mode = PageMode.Select,
                 ) }
             }
             is PageIntent.OnEditableElementChanged -> {
-                updateState { copy(editableElement = intent.updatedElement) }
+                updateState { copy(
+                    mode = PageMode.Edit(intent.updatedElement)
+                ) }
             }
         }
     }
 
     private fun applyElementChanges() {
-        val editableElement = state.value.editableElement ?: return
-        useCase.createOrUpdateElement(pageId, toElementApi(editableElement))
-            .onEach {
-                fetchPageData()
-                updateState { copy(
-                    mode = PageMode.SELECT,
-                    editableElement = null,
-                ) }
+        when (val mode = state.value.mode) {
+            is PageMode.Edit -> {
+                val editableElement = mode.element
+                useCase.createOrUpdateElement(pageId, toElementApi(editableElement))
+                    .onEach {
+                        fetchPageData()
+                        updateState { copy(
+                            mode = PageMode.Select,
+                        ) }
+                    }
+                    .catch { e -> e.printStackTrace() }
+                    .launchIn(viewModelScope)
             }
-            .catch { e -> e.printStackTrace() }
-            .launchIn(viewModelScope)
+            else -> return
+        }
     }
 
     private fun fetchPageData() {
@@ -88,8 +93,7 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
             ActionUI.Delete -> { /* TODO */ }
             ActionUI.Edit -> {
                 updateState { copy(
-                    mode = PageMode.EDIT,
-                    editableElement = element,
+                    mode = PageMode.Edit(element),
                 ) }
             }
         }
@@ -137,8 +141,8 @@ sealed class PageIntent : Intent {
 data class PageState(
     val textState: String = "Page UI state",
     val elements: List<ElementUI> = emptyList(),
-    val mode: PageMode = PageMode.VIEW,
-    val editableElement: ElementUI? = null,
+    val mode: PageMode = PageMode.View,
+    // val editableElement: ElementUI? = null,
 ) : State
 
 
@@ -161,7 +165,8 @@ sealed class ElementUI(open val id: String) {
 
 }
 
-
-enum class PageMode {
-    VIEW, SELECT, EDIT
+sealed class PageMode {
+    object View : PageMode()
+    object Select: PageMode()
+    data class Edit(val element: ElementUI) : PageMode()
 }
