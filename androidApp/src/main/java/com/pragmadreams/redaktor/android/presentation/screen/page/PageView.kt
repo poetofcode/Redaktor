@@ -123,6 +123,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
 
                             Row(Modifier.padding(10.dp)) {
                                 val color = if (element.isBound) Color(0, 200, 0, 255) else Color.Gray
+                                Spacer(modifier = Modifier.weight(1f))
                                 Icon(
                                     modifier = Modifier.size(18.dp),
                                     imageVector = if (element.isBound) Icons.Filled.Link else Icons.Filled.LinkOff,
@@ -148,6 +149,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
                     } else {
                         Row(
                             Modifier
+                                .clickable { offerIntent(PageIntent.OnElementClick(element)) }
                                 .padding(
                                     horizontal = paddHor,
                                     vertical = paddingVert

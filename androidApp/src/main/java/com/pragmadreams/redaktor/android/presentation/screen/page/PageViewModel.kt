@@ -62,6 +62,9 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
                     )
                 }
             }
+            is PageIntent.OnElementClick -> {
+                // TODO открыть экран PageScreen с аргументом pageId = intent.element.page1
+            }
         }
     }
 
@@ -152,6 +155,7 @@ class PageViewModel : BaseViewModel<PageState, PageIntent>() {
 sealed class PageIntent : Intent {
     data class OnActionClick(val element: ElementUI, val action: ActionUI) : PageIntent()
     data class OnEditableElementChanged(val updatedElement: ElementUI) : PageIntent()
+    data class OnElementClick(val element: ElementUI) : PageIntent()
     object SomeUserIntent : PageIntent()
     object ToSampleScreen : PageIntent()
     object OnStartEditModeClick : PageIntent()
