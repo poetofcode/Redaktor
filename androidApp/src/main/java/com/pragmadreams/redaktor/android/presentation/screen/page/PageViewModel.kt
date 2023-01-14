@@ -18,7 +18,7 @@ class PageViewModel(
     val savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<PageState, PageIntent>() {
 
-    private val pageId: String = savedStateHandle["id"] ?: getStartId()
+    private val pageId: String = savedStateHandle["pageId"] ?: getStartId()
 
     private fun getStartId(): String {
         // TODO get from permanent storage
@@ -71,7 +71,18 @@ class PageViewModel(
                 }
             }
             is PageIntent.OnElementClick -> {
-                // TODO открыть экран PageScreen с аргументом pageId = intent.element.page1
+                when (val element = intent.element) {
+                    is ElementUI.Link -> {
+                        element.relatedPageId?.let { pageId ->
+                            println("mylog navigate to PageId = $pageId")
+                            offerEffect(NavigationEffect.Navigate(
+                                RootScreen.PageScreen.withArguments("pageId" to pageId)
+                            ))
+                        }
+                    }
+
+                    else -> Unit
+                }
             }
         }
     }

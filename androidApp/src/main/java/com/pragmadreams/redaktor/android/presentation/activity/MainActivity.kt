@@ -28,7 +28,9 @@ class MainActivity : ComponentActivity() {
         Hub.effectFlow.collect { effect ->
             if (effect is NavigationEffect) {
                 when (effect) {
-                    is NavigationEffect.Navigate -> navHostController.navigate(effect.screen.route)
+                    is NavigationEffect.Navigate -> navHostController.navigate(
+                        effect.screen.buildTargetRoute()
+                    )
                     NavigationEffect.NavigateUp -> navHostController.navigateUp()
                 }
             }
