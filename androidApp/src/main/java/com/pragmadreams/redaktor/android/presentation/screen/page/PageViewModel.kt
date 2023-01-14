@@ -1,6 +1,6 @@
 package com.pragmadreams.redaktor.android.presentation.screen.page
 
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.pragmadreams.redaktor.android.base.BaseViewModel
 import com.pragmadreams.redaktor.android.base.Intent
 import com.pragmadreams.redaktor.android.base.State
@@ -14,9 +14,17 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class PageViewModel : BaseViewModel<PageState, PageIntent>() {
+class PageViewModel(
+    val savedStateHandle: SavedStateHandle,
+) : BaseViewModel<PageState, PageIntent>() {
 
-    private val pageId = "1"
+    private val pageId: String = savedStateHandle["id"] ?: getStartId()
+
+    private fun getStartId(): String {
+        // TODO get from permanent storage
+        return "1"
+    }
+
     private val useCase = UseCases.editorUseCase
 
     init {

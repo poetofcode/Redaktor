@@ -114,9 +114,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
                                 onValueChange = {
                                     offerIntent(
                                         PageIntent.OnEditableElementChanged(
-                                            editableElement.copy(
-                                                text = it
-                                            )
+                                            editableElement.copy(text = it)
                                         )
                                     )
                                 })
@@ -141,7 +139,6 @@ class PageView : ComposeView<PageState, PageIntent>() {
                                     color = color,
                                 )
                             }
-
                         }
                         LaunchedEffect(Unit) {
                             focusRequester.requestFocus()

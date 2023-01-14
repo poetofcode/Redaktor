@@ -9,9 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
+import androidx.navigation.navArgument
 import com.pragmadreams.redaktor.android.presentation.screen.page.PageView
 import com.pragmadreams.redaktor.android.presentation.screen.page.PageViewModel
 import com.pragmadreams.redaktor.android.util.composable
@@ -21,10 +24,13 @@ import com.pragmadreams.redaktor.android.util.composable
 fun RootNavGraph(navController: NavHostController) {
     NavHost(navController, startDestination = RootScreen.PageScreen.route) {
         composable(RootScreen.PageScreen) {
-            PageView().Content(viewModel<PageViewModel>())
+            PageView().Content(viewModel<PageViewModel>(factory = SavedStateViewModelFactory()))
         }
 
-        composable(RootScreen.SampleScreen) {
+        composable(
+            route = RootScreen.SampleScreen,
+            arguments = listOf(navArgument("pageId") { type = NavType.StringType })
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -38,7 +44,7 @@ fun RootNavGraph(navController: NavHostController) {
 }
 
 sealed class RootScreen(override val route: String) : Screen(route) {
-    object PageScreen : RootScreen("/page_screen")
+    object PageScreen : RootScreen("/page_screen/{pageId}")
 
     object SampleScreen : RootScreen("/page/sample")
 }
