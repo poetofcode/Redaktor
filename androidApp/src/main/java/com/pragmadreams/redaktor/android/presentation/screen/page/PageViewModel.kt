@@ -10,11 +10,14 @@ import com.pragmadreams.redaktor.android.navigation.RootScreen
 import com.pragmadreams.redaktor.entity.Element
 import com.pragmadreams.redaktor.entity.LinkElement
 import com.pragmadreams.redaktor.entity.TextElement
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
-class PageViewModel(
+@HiltViewModel
+class PageViewModel @Inject constructor(
     val savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<PageState, PageIntent>() {
 

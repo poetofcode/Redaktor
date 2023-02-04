@@ -9,8 +9,10 @@ import androidx.navigation.compose.rememberNavController
 import com.pragmadreams.redaktor.android.navigation.NavigationEffect
 import com.pragmadreams.redaktor.android.navigation.RootNavGraph
 import com.pragmadreams.redaktor.android.shared.Hub
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
