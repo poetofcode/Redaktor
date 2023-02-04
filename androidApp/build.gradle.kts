@@ -6,6 +6,8 @@ plugins {
 }
 
 val COMPOSE_VER = "1.3.0"
+val HILT_COMPOSE_VER = "1.0.0"
+val HILT_VER = "2.44"
 
 android {
     namespace = "com.pragmadreams.redaktor.android"
@@ -56,6 +58,7 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.5.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1")
     implementation("androidx.navigation:navigation-compose:2.5.2")
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    implementation("com.google.dagger:hilt-android:$HILT_VER")
+    kapt("com.google.dagger:hilt-android-compiler:$HILT_VER")
+    implementation("androidx.hilt:hilt-navigation-compose:$HILT_COMPOSE_VER")
 }

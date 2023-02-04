@@ -9,8 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.SavedStateViewModelFactory
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -19,12 +18,11 @@ import com.pragmadreams.redaktor.android.presentation.screen.page.PageView
 import com.pragmadreams.redaktor.android.presentation.screen.page.PageViewModel
 import com.pragmadreams.redaktor.android.util.composable
 
-
 @Composable
 fun RootNavGraph(navController: NavHostController) {
     NavHost(navController, startDestination = RootScreen.PageScreen.route) {
         composable(RootScreen.PageScreen) {
-            PageView().Content(viewModel<PageViewModel>(factory = SavedStateViewModelFactory()))
+            PageView().Content(hiltViewModel<PageViewModel>())
         }
 
         composable(
