@@ -87,6 +87,10 @@ class PageViewModel @Inject constructor(
                     else -> Unit
                 }
             }
+
+            PageIntent.OnAddNewElementClick -> {
+                onAddNewElementClick()
+            }
         }
     }
 
@@ -108,6 +112,28 @@ class PageViewModel @Inject constructor(
             }
             else -> return
         }
+    }
+
+    private fun onAddNewElementClick() {
+        println("mylog onAddNewElementClick() addNewElementToPage")
+        addNewElementToPage(TextElement.createEmpty())
+    }
+
+    private fun addNewElementToPage(element: Element) {
+        println("mylog onAddNewElementClick(), element.id = ${element.id}")
+        useCase.createOrUpdateElement(pageId, element)
+            .onEach {
+                fetchPageData()
+                // TODO открывать сразу экран редактирования элемента после доабвления
+//                updateState {
+//                    val elementUi = elements.firstOrNull { it.id == element.id }
+//                    copy(
+//                        mode = PageMode.Edit(elementUi ?: return@updateState state.value),
+//                    )
+//                }
+            }
+            .catch { e -> e.printStackTrace() }
+            .launchIn(viewModelScope)
     }
 
     private fun fetchPageData() {
@@ -184,6 +210,7 @@ sealed class PageIntent : Intent {
     object OnFinishEditModeClick : PageIntent()
     object OnApplyElementChangesClick : PageIntent()
     object OnDiscardChangesElementClick : PageIntent()
+    object OnAddNewElementClick : PageIntent()
 }
 
 data class PageState(

@@ -6,12 +6,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.ArrowCircleRight
-import androidx.compose.material.icons.outlined.ArrowRightAlt
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -20,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.colorspace.Rgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,7 +51,38 @@ class PageView : ComposeView<PageState, PageIntent>() {
                         .height(floatingToolbarHeight)
                         .align(Alignment.BottomCenter)
                 )
+                AddElementButton(
+                    Modifier
+                        .height(floatingToolbarHeight)
+                        .align(Alignment.BottomCenter)
+                )
             }
+        }
+    }
+
+    @Composable
+    private fun AddElementButton(modifier: Modifier = Modifier) {
+        val state = LocalState.current
+        val offerIntent = LocalOfferIntent.current
+        when (state.mode) {
+            is PageMode.Select -> {
+                Row(modifier.fillMaxWidth()) {
+                    Box(modifier = modifier
+                        .fillMaxWidth()
+                        .background(Color.Yellow)
+                        .clickable {
+                            offerIntent(PageIntent.OnAddNewElementClick)
+                        }
+                        .padding(5.dp)) {
+                        Icon(
+                            modifier = Modifier.align(Alignment.Center),
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = null
+                        )
+                    }
+                }
+            }
+            else -> Unit
         }
     }
 
