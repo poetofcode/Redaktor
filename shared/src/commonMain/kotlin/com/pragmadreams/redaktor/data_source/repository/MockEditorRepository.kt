@@ -7,6 +7,8 @@ import com.pragmadreams.redaktor.entity.Page
 import com.pragmadreams.redaktor.entity.TextElement
 
 internal class MockEditorRepository : EditorRepository {
+    private var UNIQ_ID_CURRENT = 99
+
     private var testPage = Page(
         id = "1",
         title = "Test page",
@@ -61,22 +63,29 @@ internal class MockEditorRepository : EditorRepository {
     }
 
     override suspend fun createOrUpdateElement(pageId: String, element: Element) {
+        println("mylog createOrUpdateElement: ${element.id}")
+
         var found = pages.first { it.id == pageId }
         if (found.elements.indexOfFirst { it.id == element.id } < 0) {
+            println("mylog New elemtn ID: ${element.id}")
+
             found = found.copy(
-                elements = found.elements.toMutableList().apply { add(element) }.toList()
+                elements = found.elements.toMutableList().apply { add(element.run {
+                    id = getUniqElementId()
+                    return@run this
+                }) }.toList()
             )
-            return
-        }
-        found = found.copy(
-            elements = found.elements.map { item ->
-                if (item.id != element.id) {
-                    item
-                } else {
-                    element
+        } else {
+            found = found.copy(
+                elements = found.elements.map { item ->
+                    if (item.id != element.id) {
+                        item
+                    } else {
+                        element
+                    }
                 }
-            }
-        )
+            )
+        }
         pages = pages.map {
             if (it.id == pageId) {
                 found
@@ -84,6 +93,11 @@ internal class MockEditorRepository : EditorRepository {
                 it
             }
         }
+    }
+
+    private fun getUniqElementId(): String {
+        UNIQ_ID_CURRENT += 1
+        return "${UNIQ_ID_CURRENT}"
     }
 
     override suspend fun deleteElement(pageId: String, elementId: String) {
