@@ -11,4 +11,8 @@ class AndroidFileDBProvider @Inject constructor() : TextFileDBContentProvider {
             }
         """.trimIndent()
     }
+
+    override suspend fun saveJsonContent(content: String) {
+        println("mylog Saving Json content: $content")
+    }
 }

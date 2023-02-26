@@ -7,6 +7,7 @@ import com.pragmadreams.redaktor.util.TextFileDBContentProvider
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class FileEditorRepository(
@@ -14,6 +15,24 @@ class FileEditorRepository(
 ) : EditorRepository {
 
     private var _data: PersistantData? = null
+
+    override suspend fun fetchPageById(pageId: String): Page {
+        val data = fetchAllData()
+        println("mylog data: $data")
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun createOrUpdateElement(pageId: String, element: Element) {
+        // TODO
+
+        saveAllData()
+    }
+
+    override suspend fun deleteElement(pageId: String, elementId: String) {
+        // TODO
+
+        saveAllData()
+    }
 
     private suspend fun fetchAllData() : PersistantData {
         if (_data != null) {
@@ -25,17 +44,9 @@ class FileEditorRepository(
         }
     }
 
-    override suspend fun fetchPageById(pageId: String): Page {
-        val data = fetchAllData()
-        println("mylog data: $data")
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun createOrUpdateElement(pageId: String, element: Element) {
-    }
-
-    override suspend fun deleteElement(pageId: String, elementId: String) {
-        TODO("Not yet implemented")
+    private suspend fun saveAllData() {
+        val encoded = Json.encodeToString(_data ?: return)
+        dbProvider.saveJsonContent(encoded)
     }
 }
 
