@@ -1,15 +1,15 @@
 package com.pragmadreams.redaktor
 
 import com.pragmadreams.redaktor.util.EmptyDBContentProvider
-import com.pragmadreams.redaktor.util.TextFileDBContentProvider
+import com.pragmadreams.redaktor.util.FileDBContentProvider
 
 data class SharedConfig(
     val isInit: Boolean,
-    val fileDBContentProvider: TextFileDBContentProvider
+    val fileDBContentProvider: FileDBContentProvider
 ) {
     companion object {
         fun setup(
-            fileDBContentProvider: TextFileDBContentProvider
+            fileDBContentProvider: FileDBContentProvider
         ) {
             if (!INSTANCE.isInit) {
                 INSTANCE = SharedConfig(

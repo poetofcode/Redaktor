@@ -3,7 +3,7 @@ package com.pragmadreams.redaktor.data_source.repository
 import com.pragmadreams.redaktor.domain.repository.EditorRepository
 import com.pragmadreams.redaktor.entity.Element
 import com.pragmadreams.redaktor.entity.Page
-import com.pragmadreams.redaktor.util.TextFileDBContentProvider
+import com.pragmadreams.redaktor.util.FileDBContentProvider
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
@@ -11,7 +11,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class FileEditorRepository(
-    val dbProvider: TextFileDBContentProvider,
+    val dbProvider: FileDBContentProvider,
 ) : EditorRepository {
 
     private var _data: PersistantData? = null

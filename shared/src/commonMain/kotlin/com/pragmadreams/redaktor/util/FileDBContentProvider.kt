@@ -1,6 +1,6 @@
 package com.pragmadreams.redaktor.util
 
-interface TextFileDBContentProvider {
+interface FileDBContentProvider {
 
     suspend fun provideJsonDB() : String
 
@@ -8,7 +8,7 @@ interface TextFileDBContentProvider {
 
 }
 
-class EmptyDBContentProvider : TextFileDBContentProvider {
+class EmptyDBContentProvider : FileDBContentProvider {
     override suspend fun provideJsonDB(): String = ""
     override suspend fun saveJsonContent(content: String) = Unit
 }

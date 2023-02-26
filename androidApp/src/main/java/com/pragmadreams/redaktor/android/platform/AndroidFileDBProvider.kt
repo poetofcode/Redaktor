@@ -1,9 +1,14 @@
 package com.pragmadreams.redaktor.android.platform
 
-import com.pragmadreams.redaktor.util.TextFileDBContentProvider
+import android.app.Application
+import com.pragmadreams.redaktor.util.FileDBContentProvider
+import java.io.File
+import java.io.IOException
 import javax.inject.Inject
 
-class AndroidFileDBProvider @Inject constructor() : TextFileDBContentProvider {
+class AndroidFileDBProvider @Inject constructor(
+    val application: Application,
+) : FileDBContentProvider {
     override suspend fun provideJsonDB(): String {
         return """
             {
@@ -13,6 +18,16 @@ class AndroidFileDBProvider @Inject constructor() : TextFileDBContentProvider {
     }
 
     override suspend fun saveJsonContent(content: String) {
-        println("mylog Saving Json content: $content")
+        try {
+            val cachePath = File(application.cacheDir, "db")
+            cachePath.mkdirs()
+            val stream = File("$cachePath/jsondb.dat")
+            stream.printWriter().use {
+                it.write(content)
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        // println("mylog Saving Json content: $content")
     }
 }
