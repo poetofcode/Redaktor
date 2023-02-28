@@ -14,7 +14,7 @@ class FileEditorRepository(
     val dbProvider: FileDBContentProvider,
 ) : EditorRepository {
 
-    private var _data: PersistantData? = null
+    private var _data: PersistentData? = null
 
     override suspend fun fetchPageById(pageId: String): Page {
         val data = fetchAllData()
@@ -34,12 +34,12 @@ class FileEditorRepository(
         saveAllData()
     }
 
-    private suspend fun fetchAllData() : PersistantData {
+    private suspend fun fetchAllData() : PersistentData {
         if (_data != null) {
             return _data!!
         }
         val dbJson = dbProvider.provideJsonDB()
-        return Json.decodeFromString<PersistantData>(dbJson).apply {
+        return Json.decodeFromString<PersistentData>(dbJson).apply {
             _data = this
         }
     }
@@ -51,7 +51,7 @@ class FileEditorRepository(
 }
 
 @Serializable
-data class PersistantData(
+data class PersistentData(
 
     @SerialName("pages")
     val pages: List<Page>,
