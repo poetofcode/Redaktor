@@ -52,5 +52,7 @@ class FileEditorRepository(
 
 @Serializable
 data class PersistantData(
-    @SerialName("todo") val todo: Int
+
+    @SerialName("pages")
+    val pages: List<Page>,
 )

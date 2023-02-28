@@ -1,5 +1,8 @@
 package com.pragmadreams.redaktor.entity
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 open class Element(
     open var id: String,
 ) {
