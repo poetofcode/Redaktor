@@ -58,8 +58,16 @@ internal class MockEditorRepository : EditorRepository {
     )
     var pages = listOf(testPage, testPage2)
 
+    override suspend fun fetchStartPage(): Page {
+        return fetchPageById(pageId = fetchStartPageId())
+    }
+
     override suspend fun fetchPageById(pageId: String): Page {
         return pages.first { it.id == pageId }
+    }
+
+    override suspend fun fetchStartPageId(): String {
+        return "1"
     }
 
     override suspend fun createOrUpdateElement(pageId: String, element: Element) {

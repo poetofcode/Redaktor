@@ -137,7 +137,7 @@ class PageViewModel @Inject constructor(
     }
 
     private fun fetchPageData() {
-        useCase.fetchPageById(pageId)
+        useCase.fetchStartPage()
             .onEach {
                 val elementsUI = fromElementsApi(it.elements)
                 updateState { copy(elements = elementsUI) }
