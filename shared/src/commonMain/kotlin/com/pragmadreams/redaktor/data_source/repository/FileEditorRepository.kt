@@ -18,10 +18,18 @@ class FileEditorRepository(
     private var _data: PersistentData? = null
     private var dataOrDefault: PersistentData
         get() {
-            if (_data != null) return _data!!
+            if (_data != null) {
+                println("mylog2, отдаём НЕ-ПУСТУЮ _data")
+                return _data!!
+            }
+            println("mylog2, отдаём EMPTY _data")
             return PersistentData.EMPTY
         }
-        set(value) { _data = value }
+        set(value) {
+            println("mylog3, SET _data: $value")
+
+            _data = value
+        }
 
     override suspend fun fetchStartPage(): Page {
         return fetchPageById(pageId = fetchStartPageId())
@@ -66,7 +74,9 @@ class FileEditorRepository(
                 }
             )
         }
+        println("mylog4 _data ДО: $_data, pageId: ${pageId}")
         dataOrDefault = dataOrDefault.copy(pages = dataOrDefault.pages.map {
+            println("mylog4 pageId: ${pageId}, it.id = ${it.id}")
             if (it.id == pageId) {
                 foundPage
             } else {
@@ -74,7 +84,8 @@ class FileEditorRepository(
             }
         })
 
-        println("mylog BEFORE_SAVE_DATA = $dataOrDefault, PAGE = $foundPage")
+        // println("mylog BEFORE_SAVE_DATA = $dataOrDefault, PAGE = $foundPage")
+        println("mylog2 _data ПОСЛЕ: $_data")
         saveAllData()
     }
 

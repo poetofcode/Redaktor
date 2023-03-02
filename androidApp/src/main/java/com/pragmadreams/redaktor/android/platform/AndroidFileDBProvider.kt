@@ -12,12 +12,20 @@ class AndroidFileDBProvider @Inject constructor(
     override suspend fun provideJsonDB(): String {
         return """
             {
-                "todo": 666
+              "pages": [
+                {
+                  "id": "5a060ed0-f681-4ab5-af9d-d5243ef9e0d9",
+                  "title": "index",
+                  "elements": []
+                }
+              ],
+              "start_page_id": "5a060ed0-f681-4ab5-af9d-d5243ef9e0d9"
             }
         """.trimIndent()
     }
 
     override suspend fun saveJsonContent(content: String) {
+        println("mylog Content of JsonDB: $content")
         try {
             val cachePath = File(application.cacheDir, "db")
             cachePath.mkdirs()
