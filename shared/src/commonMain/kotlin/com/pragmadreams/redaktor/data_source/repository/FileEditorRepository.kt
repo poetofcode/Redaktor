@@ -2,7 +2,9 @@ package com.pragmadreams.redaktor.data_source.repository
 
 import com.pragmadreams.redaktor.domain.repository.EditorRepository
 import com.pragmadreams.redaktor.entity.Element
+import com.pragmadreams.redaktor.entity.LinkElement
 import com.pragmadreams.redaktor.entity.Page
+import com.pragmadreams.redaktor.entity.TextElement
 import com.pragmadreams.redaktor.util.FileDBContentProvider
 import com.pragmadreams.redaktor.util.createUUID
 import kotlinx.serialization.SerialName
@@ -10,6 +12,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
 
 class FileEditorRepository(
     val dbProvider: FileDBContentProvider,
@@ -26,6 +29,18 @@ class FileEditorRepository(
         set(value) {
             _data = value
         }
+
+    //
+    // Сюда нужно добавить все классы-наследники Element
+    //
+    private val module = SerializersModule {
+        polymorphic(Element::class, TextElement::class, TextElement.serializer())
+        polymorphic(Element::class, LinkElement::class, LinkElement.serializer())
+    }
+    private val customJson = Json {
+        serializersModule = module
+        encodeDefaults = true
+    }
 
     override suspend fun fetchStartPage(): Page {
         val startPageId = fetchStartPageId().takeIf { it.isNotBlank() } ?: createStartPage().id
@@ -104,7 +119,7 @@ class FileEditorRepository(
         }
         return try {
             val dbJson = dbProvider.provideJsonDB()
-            Json.decodeFromString<PersistentData>(dbJson).apply {
+            customJson.decodeFromString<PersistentData>(dbJson).apply {
                 _data = this
             }
         } catch (e: Throwable) {
@@ -114,7 +129,7 @@ class FileEditorRepository(
     }
 
     private suspend fun saveAllData() {
-        val encoded = Json.encodeToString(_data ?: return)
+        val encoded = customJson.encodeToString(_data ?: return)
         dbProvider.saveJsonContent(encoded)
     }
 }
