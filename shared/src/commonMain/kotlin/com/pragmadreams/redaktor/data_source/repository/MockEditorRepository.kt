@@ -66,17 +66,13 @@ internal class MockEditorRepository : EditorRepository {
         return pages.first { it.id == pageId }
     }
 
-    override suspend fun fetchStartPageId(): String {
+    private suspend fun fetchStartPageId(): String {
         return "1"
     }
 
     override suspend fun createOrUpdateElement(pageId: String, element: Element) {
-        println("mylog createOrUpdateElement: ${element.id}")
-
         var found = pages.first { it.id == pageId }
         if (found.elements.indexOfFirst { it.id == element.id } < 0) {
-            println("mylog New elemtn ID: ${element.id}")
-
             found = found.copy(
                 elements = found.elements.toMutableList().apply { add(element.run {
                     id = getUniqElementId()

@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PageViewModel @Inject constructor(
-    val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<PageState, PageIntent>() {
 
     private val pageId: String? = savedStateHandle["pageId"]
@@ -72,7 +72,6 @@ class PageViewModel @Inject constructor(
                 when (val element = intent.element) {
                     is ElementUI.Link -> {
                         element.relatedPageId?.let { pageId ->
-                            println("mylog navigate to PageId = $pageId")
                             offerEffect(NavigationEffect.Navigate(
                                 RootScreen.PageScreen.withArguments("pageId" to pageId)
                             ))
@@ -110,12 +109,10 @@ class PageViewModel @Inject constructor(
     }
 
     private fun onAddNewElementClick() {
-        println("mylog onAddNewElementClick() addNewElementToPage")
         addNewElementToPage(TextElement.createEmpty())
     }
 
     private fun addNewElementToPage(element: Element) {
-        println("mylog onAddNewElementClick(), element.id = ${element.id}")
         useCase.createOrUpdateElement(state.value.pageId ?: return, element)
             .onEach {
                 fetchPageData()

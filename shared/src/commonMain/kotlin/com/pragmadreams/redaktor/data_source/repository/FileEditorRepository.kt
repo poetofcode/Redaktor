@@ -19,42 +19,35 @@ class FileEditorRepository(
     private var dataOrDefault: PersistentData
         get() {
             if (_data != null) {
-                println("mylog2, отдаём НЕ-ПУСТУЮ _data")
                 return _data!!
             }
-            println("mylog2, отдаём EMPTY _data")
             return PersistentData.EMPTY
         }
         set(value) {
-            println("mylog3, SET _data: $value")
-
             _data = value
         }
 
     override suspend fun fetchStartPage(): Page {
-        return fetchPageById(pageId = fetchStartPageId())
+        val startPageId = fetchStartPageId().takeIf { it.isNotBlank() } ?: createStartPage().id
+        return fetchPageById(pageId = startPageId)
     }
 
-    override suspend fun fetchPageById(pageId: String): Page {
-        val data = fetchAllData()
-        println("mylog data: $data")
-        return data.pages.first { it.id == pageId }
-    }
-
-    override suspend fun fetchStartPageId(): String {
+    private suspend fun fetchStartPageId(): String {
         val data = fetchAllData()
         return data.startPageId
     }
 
-    override suspend fun createOrUpdateElement(pageId: String, element: Element) {
-        println("mylog DB: $dataOrDefault, pageId: $pageId")
+    override suspend fun fetchPageById(pageId: String): Page {
+        val data = fetchAllData()
+        return data.pages.first { it.id == pageId }
+    }
 
-        var foundPage = dataOrDefault.pages.firstOrNull { it.id == pageId } ?: createNewPage()
-        println("mylog Found element index: ${foundPage.elements.indexOfFirst { it.id == element.id }}")
+    override suspend fun createOrUpdateElement(pageId: String, element: Element) {
+        var foundPage = dataOrDefault.pages.firstOrNull {
+            it.id == pageId
+        } ?: throw Exception("Page with id{$pageId} not found")
 
         if (foundPage.elements.indexOfFirst { it.id == element.id } < 0) {
-            println("mylog New elemtn ID: ${element.id}")
-
             foundPage = foundPage.copy(
                 elements = foundPage.elements.toMutableList().apply {
                     add(element.run {
@@ -74,18 +67,13 @@ class FileEditorRepository(
                 }
             )
         }
-        println("mylog4 _data ДО: $_data, pageId: ${pageId}")
         dataOrDefault = dataOrDefault.copy(pages = dataOrDefault.pages.map {
-            println("mylog4 pageId: ${pageId}, it.id = ${it.id}")
             if (it.id == pageId) {
                 foundPage
             } else {
                 it
             }
         })
-
-        // println("mylog BEFORE_SAVE_DATA = $dataOrDefault, PAGE = $foundPage")
-        println("mylog2 _data ПОСЛЕ: $_data")
         saveAllData()
     }
 
@@ -95,7 +83,7 @@ class FileEditorRepository(
         saveAllData()
     }
 
-    private suspend fun createNewPage(): Page {
+    private suspend fun createStartPage(): Page {
         val pageId = createUUID()
         val page = Page(
             id = pageId,
@@ -106,7 +94,6 @@ class FileEditorRepository(
             pages = listOf(page),
             startPageId = pageId
         )
-        println("mylog AFTER_CREATE_PAGE_DATA = $dataOrDefault")
         saveAllData()
         return page
     }
@@ -115,9 +102,14 @@ class FileEditorRepository(
         if (_data != null) {
             return _data!!
         }
-        val dbJson = dbProvider.provideJsonDB()
-        return Json.decodeFromString<PersistentData>(dbJson).apply {
-            _data = this
+        return try {
+            val dbJson = dbProvider.provideJsonDB()
+            Json.decodeFromString<PersistentData>(dbJson).apply {
+                _data = this
+            }
+        } catch (e: Throwable) {
+            _data = PersistentData.EMPTY
+            _data!!
         }
     }
 
