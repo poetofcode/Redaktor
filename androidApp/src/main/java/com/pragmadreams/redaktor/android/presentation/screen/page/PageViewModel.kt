@@ -18,15 +18,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PageViewModel @Inject constructor(
-    val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<PageState, PageIntent>() {
 
-    private val pageId: String = savedStateHandle["pageId"] ?: getStartId()
-
-    private fun getStartId(): String {
-        // TODO get from permanent storage
-        return "1"
-    }
+    private val pageId: String? = savedStateHandle["pageId"]
 
     private val useCase = UseCases.editorUseCase
 
@@ -77,7 +72,6 @@ class PageViewModel @Inject constructor(
                 when (val element = intent.element) {
                     is ElementUI.Link -> {
                         element.relatedPageId?.let { pageId ->
-                            println("mylog navigate to PageId = $pageId")
                             offerEffect(NavigationEffect.Navigate(
                                 RootScreen.PageScreen.withArguments("pageId" to pageId)
                             ))
@@ -98,7 +92,7 @@ class PageViewModel @Inject constructor(
         when (val mode = state.value.mode) {
             is PageMode.Edit -> {
                 val editableElement = mode.element
-                useCase.createOrUpdateElement(pageId, toElementApi(editableElement))
+                useCase.createOrUpdateElement(state.value.pageId ?: return, toElementApi(editableElement))
                     .onEach {
                         fetchPageData()
                         updateState {
@@ -115,13 +109,11 @@ class PageViewModel @Inject constructor(
     }
 
     private fun onAddNewElementClick() {
-        println("mylog onAddNewElementClick() addNewElementToPage")
         addNewElementToPage(TextElement.createEmpty())
     }
 
     private fun addNewElementToPage(element: Element) {
-        println("mylog onAddNewElementClick(), element.id = ${element.id}")
-        useCase.createOrUpdateElement(pageId, element)
+        useCase.createOrUpdateElement(state.value.pageId ?: return, element)
             .onEach {
                 fetchPageData()
                 // TODO открывать сразу экран редактирования элемента после доабвления
@@ -137,10 +129,18 @@ class PageViewModel @Inject constructor(
     }
 
     private fun fetchPageData() {
-        useCase.fetchPageById(pageId)
-            .onEach {
-                val elementsUI = fromElementsApi(it.elements)
-                updateState { copy(elements = elementsUI) }
+        val fetchPageFlow = if (pageId != null) {
+            useCase.fetchPageById(pageId)
+        } else {
+            useCase.fetchStartPage()
+        }
+        fetchPageFlow
+            .onEach { page ->
+                val elementsUI = fromElementsApi(page.elements)
+                updateState { copy(
+                    pageId = page.id,
+                    elements = elementsUI
+                ) }
             }
             .catch { e -> e.printStackTrace() }
             .launchIn(viewModelScope)
@@ -214,6 +214,7 @@ sealed class PageIntent : Intent {
 }
 
 data class PageState(
+    val pageId: String? = null,
     val textState: String = "Page UI state",
     val elements: List<ElementUI> = emptyList(),
     val mode: PageMode = PageMode.View,

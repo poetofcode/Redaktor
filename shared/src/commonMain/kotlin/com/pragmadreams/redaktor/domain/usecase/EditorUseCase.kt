@@ -14,6 +14,9 @@ class EditorUseCase constructor(
         emit(repository.fetchPageById(pageId))
     }.flowOnDefaultContext()
 
+    fun fetchStartPage() : CommonFlow<Page> = flow {
+        emit(repository.fetchStartPage())
+    }.flowOnDefaultContext()
 
     fun createOrUpdateElement(pageId: String, element: Element): CommonFlow<Unit> = flow {
         repository.createOrUpdateElement(pageId, element)
