@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.pragmadreams.redaktor.android.base.ComposeView
 import com.pragmadreams.redaktor.android.util.compose.drag_and_drop_list.DragDropList
-
+import java.util.*
 
 class PageView : ComposeView<PageState, PageIntent>() {
 
@@ -90,6 +90,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
     @Composable
     private fun ElementList(contentPaddingBottom: Dp, focusRequester: FocusRequester) {
         val state = LocalState.current
+        val offerIntent = LocalOfferIntent.current
 
         DragDropList(
             items = state.elements,
@@ -98,9 +99,15 @@ class PageView : ComposeView<PageState, PageIntent>() {
             },
             contentPadding = PaddingValues(bottom = contentPaddingBottom),
             onMove = { oldPos, newPos ->
-                println("mylog OldPos = $oldPos, NewPos = $newPos")
+                offerIntent(PageIntent.OnReorderListElement(oldPosition = oldPos, newPosition = newPos))
             },
         )
+    }
+
+    fun <T> swap(list: MutableList<T>, i: Int, j: Int) {
+        val t = list[i]
+        list[i] = list[j]
+        list[j] = t
     }
 
     @Composable

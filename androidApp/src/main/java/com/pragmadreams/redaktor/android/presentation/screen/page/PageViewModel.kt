@@ -1,6 +1,7 @@
 package com.pragmadreams.redaktor.android.presentation.screen.page
 
-import androidx.lifecycle.*
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.pragmadreams.redaktor.android.base.BaseViewModel
 import com.pragmadreams.redaktor.android.base.Intent
 import com.pragmadreams.redaktor.android.base.State
@@ -10,6 +11,7 @@ import com.pragmadreams.redaktor.android.navigation.RootScreen
 import com.pragmadreams.redaktor.entity.Element
 import com.pragmadreams.redaktor.entity.LinkElement
 import com.pragmadreams.redaktor.entity.TextElement
+import com.pragmadreams.redaktor.util.swap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
@@ -84,6 +86,11 @@ class PageViewModel @Inject constructor(
 
             PageIntent.OnAddNewElementClick -> {
                 onAddNewElementClick()
+            }
+            is PageIntent.OnReorderListElement -> {
+                updateState { copy(
+                    elements = elements.swap(intent.oldPosition, intent.newPosition)
+                ) }
             }
         }
     }
@@ -204,6 +211,8 @@ sealed class PageIntent : Intent {
     data class OnActionClick(val element: ElementUI, val action: ActionUI) : PageIntent()
     data class OnEditableElementChanged(val updatedElement: ElementUI) : PageIntent()
     data class OnElementClick(val element: ElementUI) : PageIntent()
+    class OnReorderListElement(val oldPosition: Int, val newPosition: Int) : PageIntent()
+
     object SomeUserIntent : PageIntent()
     object ToSampleScreen : PageIntent()
     object OnStartEditModeClick : PageIntent()
