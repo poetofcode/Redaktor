@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.pragmadreams.redaktor.android.base.ComposeView
+import com.pragmadreams.redaktor.android.util.compose.drag_and_drop_list.DragDropList
 
 
 class PageView : ComposeView<PageState, PageIntent>() {
@@ -89,11 +90,17 @@ class PageView : ComposeView<PageState, PageIntent>() {
     @Composable
     private fun ElementList(contentPaddingBottom: Dp, focusRequester: FocusRequester) {
         val state = LocalState.current
-        LazyColumn(contentPadding = PaddingValues(bottom = contentPaddingBottom)) {
-            items(state.elements) {
+
+        DragDropList(
+            items = state.elements,
+            itemView = {
                 ElementItem(it, focusRequester)
-            }
-        }
+            },
+            contentPadding = PaddingValues(bottom = contentPaddingBottom),
+            onMove = { oldPos, newPos ->
+                println("mylog OldPos = $oldPos, NewPos = $newPos")
+            },
+        )
     }
 
     @Composable
