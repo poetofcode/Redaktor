@@ -7,6 +7,7 @@ import com.pragmadreams.redaktor.entity.Page
 import com.pragmadreams.redaktor.entity.TextElement
 import com.pragmadreams.redaktor.util.FileDBContentProvider
 import com.pragmadreams.redaktor.util.createUUID
+import com.pragmadreams.redaktor.util.swap
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
@@ -95,6 +96,29 @@ class FileEditorRepository(
     override suspend fun deleteElement(pageId: String, elementId: String) {
         // TODO
 
+        saveAllData()
+    }
+
+    override suspend fun reorderElements(pageId: String, firstElementId: String, secondElementId: String) {
+        var foundPage = dataOrDefault.pages.firstOrNull {
+            it.id == pageId
+        } ?: throw Exception("Page with id{$pageId} not found")
+
+        val firstIndex = foundPage.elements.first { it.id == firstElementId }
+        val secondIndex = foundPage.elements.first { it.id == secondElementId }
+
+        dataOrDefault = dataOrDefault.copy(pages = dataOrDefault.pages.map {
+            if (it.id == pageId) {
+                foundPage.copy(
+                    elements = foundPage.elements.swap(
+                        foundPage.elements.indexOf(firstIndex),
+                        foundPage.elements.indexOf(secondIndex)
+                    )
+                )
+            } else {
+                it
+            }
+        })
         saveAllData()
     }
 

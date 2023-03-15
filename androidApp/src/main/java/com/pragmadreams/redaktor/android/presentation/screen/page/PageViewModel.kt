@@ -88,9 +88,22 @@ class PageViewModel @Inject constructor(
                 onAddNewElementClick()
             }
             is PageIntent.OnReorderListElement -> {
-                updateState { copy(
-                    elements = elements.swap(intent.oldPosition, intent.newPosition)
-                ) }
+                useCase.reorderElements(
+                    pageId = state.value.pageId ?: return,
+                    firstElementId = state.value.elements[intent.oldPosition].id,
+                    secondElementId = state.value.elements[intent.newPosition].id,
+                )
+                    .onEach {
+                        updateState {
+                            copy(
+                                elements = elements.swap(intent.oldPosition, intent.newPosition)
+                            )
+                        }
+                    }
+                    .catch { e ->
+                        e.printStackTrace()
+                    }
+                    .launchIn(viewModelScope)
             }
         }
     }
@@ -99,7 +112,8 @@ class PageViewModel @Inject constructor(
         when (val mode = state.value.mode) {
             is PageMode.Edit -> {
                 val editableElement = mode.element
-                useCase.createOrUpdateElement(state.value.pageId ?: return, toElementApi(editableElement))
+                useCase.createOrUpdateElement(state.value.pageId
+                    ?: return, toElementApi(editableElement))
                     .onEach {
                         fetchPageData()
                         updateState {
@@ -144,10 +158,12 @@ class PageViewModel @Inject constructor(
         fetchPageFlow
             .onEach { page ->
                 val elementsUI = fromElementsApi(page.elements)
-                updateState { copy(
-                    pageId = page.id,
-                    elements = elementsUI
-                ) }
+                updateState {
+                    copy(
+                        pageId = page.id,
+                        elements = elementsUI
+                    )
+                }
             }
             .catch { e -> e.printStackTrace() }
             .launchIn(viewModelScope)
