@@ -117,9 +117,14 @@ class PageView : ComposeView<PageState, PageIntent>() {
         val state = LocalState.current
         val editableElement: ElementUI? = (state.mode as? PageMode.Edit)?.element
         Column(
-            modifier = Modifier.then(if (state.isDragging) {
-                Modifier.border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(5.dp))
-            } else Modifier)
+            modifier = Modifier
+                .then(if (state.isDragging) {
+                    Modifier
+                        .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(5.dp))
+                        .then(if (element.id == state.elements[state.draggableIndex!!].id) {
+                            Modifier.background(Color.Yellow)
+                        } else Modifier)
+                } else Modifier)
         ) {
             when (element) {
                 is ElementUI.Text -> {

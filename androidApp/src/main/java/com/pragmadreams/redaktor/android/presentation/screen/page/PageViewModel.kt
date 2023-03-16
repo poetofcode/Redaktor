@@ -101,7 +101,8 @@ class PageViewModel @Inject constructor(
 
                 updateState {
                     copy(
-                        elements = elements.swap(intent.oldPosition, intent.newPosition)
+                        elements = elements.swap(intent.oldPosition, intent.newPosition),
+                        draggableIndex = intent.newPosition,
                     )
                 }
             }
