@@ -93,17 +93,17 @@ class PageViewModel @Inject constructor(
                     firstElementId = state.value.elements[intent.oldPosition].id,
                     secondElementId = state.value.elements[intent.newPosition].id,
                 )
-                    .onEach {
-                        updateState {
-                            copy(
-                                elements = elements.swap(intent.oldPosition, intent.newPosition)
-                            )
-                        }
-                    }
                     .catch { e ->
                         e.printStackTrace()
+                        fetchPageData()
                     }
                     .launchIn(viewModelScope)
+
+                updateState {
+                    copy(
+                        elements = elements.swap(intent.oldPosition, intent.newPosition)
+                    )
+                }
             }
         }
     }
