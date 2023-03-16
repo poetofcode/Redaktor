@@ -4,8 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -24,7 +22,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.pragmadreams.redaktor.android.base.ComposeView
 import com.pragmadreams.redaktor.android.util.compose.drag_and_drop_list.DragDropList
-import java.util.*
 
 class PageView : ComposeView<PageState, PageIntent>() {
 
@@ -93,6 +90,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
         val offerIntent = LocalOfferIntent.current
 
         DragDropList(
+            modifier = Modifier.background(Color.Transparent),
             items = state.elements,
             itemView = {
                 ElementItem(it, focusRequester)
@@ -101,13 +99,13 @@ class PageView : ComposeView<PageState, PageIntent>() {
             onMove = { oldPos, newPos ->
                 offerIntent(PageIntent.OnReorderListElement(oldPosition = oldPos, newPosition = newPos))
             },
-        )
-    }
+            onStartDragging = {
 
-    fun <T> swap(list: MutableList<T>, i: Int, j: Int) {
-        val t = list[i]
-        list[i] = list[j]
-        list[j] = t
+            },
+            onStopDragging = {
+
+            }
+        )
     }
 
     @Composable
@@ -124,6 +122,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
                         OutlinedTextField(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .background(Color.Transparent)
                                 .focusRequester(focusRequester),
                             value = editableElement.text,
                             onValueChange = {

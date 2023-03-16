@@ -1,22 +1,17 @@
 package com.pragmadreams.redaktor.android.util.compose.drag_and_drop_list
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -25,6 +20,8 @@ fun <T> DragDropList(
     items: List<T>,
     itemView: @Composable (T) -> Unit,
     onMove: (Int, Int) -> Unit,
+    onStartDragging: () -> Unit = {},
+    onStopDragging: () -> Unit = {},
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
 ) {
@@ -40,7 +37,7 @@ fun <T> DragDropList(
             .pointerInput(Unit) {
                 detectDragGesturesAfterLongPress(
                     onDrag = { change, offset ->
-                        change.consumeAllChanges()
+                        change.consume()
                         dragDropListState.onDrag(offset)
 
                         if (overscrollJob?.isActive == true)
@@ -51,9 +48,18 @@ fun <T> DragDropList(
                             ?.let { overscrollJob = scope.launch { dragDropListState.lazyListState.scrollBy(it) } }
                             ?: run { overscrollJob?.cancel() }
                     },
-                    onDragStart = { offset -> dragDropListState.onDragStart(offset) },
-                    onDragEnd = { dragDropListState.onDragInterrupted() },
-                    onDragCancel = { dragDropListState.onDragInterrupted() }
+                    onDragStart = { offset ->
+                        dragDropListState.onDragStart(offset)
+                        onStartDragging()
+                    },
+                    onDragEnd = {
+                        dragDropListState.onDragInterrupted()
+                        onStopDragging()
+                    },
+                    onDragCancel = {
+                        dragDropListState.onDragInterrupted()
+                        onStopDragging()
+                    }
                 )
             },
         contentPadding = contentPadding,
@@ -73,7 +79,6 @@ fun <T> DragDropList(
                                 translationY = offsetOrNull ?: 0f
                             }
                     }
-                    .background(Color.White, shape = RoundedCornerShape(4.dp))
                     .fillMaxWidth()
             ) { itemView(item) }
         }
@@ -105,7 +110,9 @@ class DragDropListState(
     val elementDisplacement: Float?
         get() = currentIndexOfDraggedItem
             ?.let { lazyListState.getVisibleItemInfoFor(absoluteIndex = it) }
-            ?.let { item -> (initiallyDraggedElement?.offset ?: 0f).toFloat() + draggedDistance - item.offset }
+            ?.let { item ->
+                (initiallyDraggedElement?.offset ?: 0f).toFloat() + draggedDistance - item.offset
+            }
 
     val currentElement: LazyListItemInfo?
         get() = currentIndexOfDraggedItem?.let {
