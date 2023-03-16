@@ -99,8 +99,8 @@ class PageView : ComposeView<PageState, PageIntent>() {
             onMove = { oldPos, newPos ->
                 offerIntent(PageIntent.OnReorderListElement(oldPosition = oldPos, newPosition = newPos))
             },
-            onStartDragging = {
-
+            onStartDragging = { itemIndex ->
+                println("mylog DragIndex = $itemIndex")
             },
             onStopDragging = {
 

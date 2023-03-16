@@ -20,7 +20,7 @@ fun <T> DragDropList(
     items: List<T>,
     itemView: @Composable (T) -> Unit,
     onMove: (Int, Int) -> Unit,
-    onStartDragging: () -> Unit = {},
+    onStartDragging: (Int?) -> Unit = {},
     onStopDragging: () -> Unit = {},
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
@@ -49,8 +49,8 @@ fun <T> DragDropList(
                             ?: run { overscrollJob?.cancel() }
                     },
                     onDragStart = { offset ->
-                        dragDropListState.onDragStart(offset)
-                        onStartDragging()
+                        val elementindex = dragDropListState.onDragStart(offset)
+                        onStartDragging(elementindex)
                     },
                     onDragEnd = {
                         dragDropListState.onDragInterrupted()
@@ -121,13 +121,14 @@ class DragDropListState(
 
     var overscrollJob by mutableStateOf<Job?>(null)
 
-    fun onDragStart(offset: Offset) {
+    fun onDragStart(offset: Offset) : Int? {
         lazyListState.layoutInfo.visibleItemsInfo
             .firstOrNull { item -> offset.y.toInt() in item.offset..(item.offset + item.size) }
             ?.also {
                 currentIndexOfDraggedItem = it.index
                 initiallyDraggedElement = it
             }
+        return currentIndexOfDraggedItem
     }
 
     fun onDragInterrupted() {
