@@ -23,6 +23,11 @@ class EditorUseCase constructor(
         emit(Unit)
     }.flowOnDefaultContext()
 
+    fun reorderElements(pageId: String, firstElementId: String, secondElementId: String): CommonFlow<Unit> = flow {
+        repository.reorderElements(pageId, firstElementId, secondElementId)
+        emit(Unit)
+    }.flowOnDefaultContext()
+
     fun deleteElement(pageId: String, elementId: String): CommonFlow<Unit> = flow {
         repository.deleteElement(pageId, elementId)
         emit(Unit)
