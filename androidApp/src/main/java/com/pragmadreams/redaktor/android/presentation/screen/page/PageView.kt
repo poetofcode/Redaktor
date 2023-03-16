@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -100,10 +101,10 @@ class PageView : ComposeView<PageState, PageIntent>() {
                 offerIntent(PageIntent.OnReorderListElement(oldPosition = oldPos, newPosition = newPos))
             },
             onStartDragging = { itemIndex ->
-                println("mylog DragIndex = $itemIndex")
+                offerIntent(PageIntent.OnStartDragging(itemIndex ?: return@DragDropList))
             },
             onStopDragging = {
-
+                offerIntent(PageIntent.OnFinishDragging)
             }
         )
     }
@@ -115,7 +116,11 @@ class PageView : ComposeView<PageState, PageIntent>() {
         val offerIntent = LocalOfferIntent.current
         val state = LocalState.current
         val editableElement: ElementUI? = (state.mode as? PageMode.Edit)?.element
-        Column {
+        Column(
+            modifier = Modifier.then(if (state.isDragging) {
+                Modifier.border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(5.dp))
+            } else Modifier)
+        ) {
             when (element) {
                 is ElementUI.Text -> {
                     if (editableElement is ElementUI.Text && editableElement.id == element.id) {

@@ -105,6 +105,8 @@ class PageViewModel @Inject constructor(
                     )
                 }
             }
+            PageIntent.OnFinishDragging -> updateState { copy(draggableIndex = null) }
+            is PageIntent.OnStartDragging -> updateState { copy(draggableIndex = intent.itemIndex) }
         }
     }
 
@@ -229,6 +231,10 @@ sealed class PageIntent : Intent {
     data class OnElementClick(val element: ElementUI) : PageIntent()
     class OnReorderListElement(val oldPosition: Int, val newPosition: Int) : PageIntent()
 
+    class OnStartDragging(val itemIndex: Int) : PageIntent()
+
+    object OnFinishDragging : PageIntent()
+
     object SomeUserIntent : PageIntent()
     object ToSampleScreen : PageIntent()
     object OnStartEditModeClick : PageIntent()
@@ -243,7 +249,10 @@ data class PageState(
     val textState: String = "Page UI state",
     val elements: List<ElementUI> = emptyList(),
     val mode: PageMode = PageMode.View,
-) : State
+    val draggableIndex: Int? = null,
+) : State {
+    val isDragging: Boolean get() = draggableIndex != null
+}
 
 
 sealed class ActionUI {
