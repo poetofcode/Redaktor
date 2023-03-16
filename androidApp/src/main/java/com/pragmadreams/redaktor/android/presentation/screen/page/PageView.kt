@@ -104,7 +104,8 @@ class PageView : ComposeView<PageState, PageIntent>() {
             },
             onStopDragging = {
                 offerIntent(PageIntent.OnFinishDragging)
-            }
+            },
+            isDraggable = false
         )
     }
 

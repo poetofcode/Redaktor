@@ -20,9 +20,10 @@ fun <T> DragDropList(
     items: List<T>,
     itemView: @Composable (T) -> Unit,
     onMove: (Int, Int) -> Unit,
+    modifier: Modifier = Modifier,
+    isDraggable: Boolean = true,
     onStartDragging: (Int?) -> Unit = {},
     onStopDragging: () -> Unit = {},
-    modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
 ) {
 
@@ -35,6 +36,9 @@ fun <T> DragDropList(
     LazyColumn(
         modifier = modifier
             .pointerInput(Unit) {
+                if (!isDraggable) {
+                    return@pointerInput
+                }
                 detectDragGesturesAfterLongPress(
                     onDrag = { change, offset ->
                         change.consume()
@@ -49,8 +53,8 @@ fun <T> DragDropList(
                             ?: run { overscrollJob?.cancel() }
                     },
                     onDragStart = { offset ->
-                        val elementindex = dragDropListState.onDragStart(offset)
-                        onStartDragging(elementindex)
+                        val elementIndex = dragDropListState.onDragStart(offset)
+                        onStartDragging(elementIndex)
                     },
                     onDragEnd = {
                         dragDropListState.onDragInterrupted()
