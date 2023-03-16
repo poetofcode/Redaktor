@@ -68,7 +68,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
                 Row(modifier.fillMaxWidth()) {
                     Box(modifier = modifier
                         .fillMaxWidth()
-                        .background(Color.Yellow)
+                        .background(Color.Cyan)
                         .clickable {
                             offerIntent(PageIntent.OnAddNewElementClick)
                         }
@@ -91,7 +91,6 @@ class PageView : ComposeView<PageState, PageIntent>() {
         val offerIntent = LocalOfferIntent.current
 
         DragDropList(
-            modifier = Modifier.background(Color.Transparent),
             items = state.elements,
             itemView = {
                 ElementItem(it, focusRequester)
