@@ -35,7 +35,7 @@ fun <T> DragDropList(
 
     LazyColumn(
         modifier = modifier
-            .pointerInput(Unit) {
+            .pointerInput(isDraggable) {
                 if (!isDraggable) {
                     return@pointerInput
                 }
