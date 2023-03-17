@@ -1,4 +1,4 @@
-package com.pragmadreams.redaktor.android.presentation.screen.list
+package com.pragmadreams.redaktor.android.presentation.screen.catalog
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text

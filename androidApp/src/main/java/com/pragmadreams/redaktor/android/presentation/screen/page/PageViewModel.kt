@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.pragmadreams.redaktor.android.base.BaseViewModel
 import com.pragmadreams.redaktor.android.base.Intent
 import com.pragmadreams.redaktor.android.base.State
-import com.pragmadreams.redaktor.android.domain.UseCases
 import com.pragmadreams.redaktor.android.navigation.NavigationEffect
 import com.pragmadreams.redaktor.android.navigation.RootScreen
+import com.pragmadreams.redaktor.domain.usecase.EditorUseCase
 import com.pragmadreams.redaktor.entity.Element
 import com.pragmadreams.redaktor.entity.LinkElement
 import com.pragmadreams.redaktor.entity.TextElement
@@ -21,11 +21,10 @@ import javax.inject.Inject
 @HiltViewModel
 class PageViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    val editorUseCase: EditorUseCase,
 ) : BaseViewModel<PageState, PageIntent>() {
 
     private val pageId: String? = savedStateHandle["pageId"]
-
-    private val useCase = UseCases.editorUseCase
 
     init {
         fetchPageData()
@@ -88,7 +87,7 @@ class PageViewModel @Inject constructor(
                 onAddNewElementClick()
             }
             is PageIntent.OnReorderListElement -> {
-                useCase.reorderElements(
+                editorUseCase.reorderElements(
                     pageId = state.value.pageId ?: return,
                     firstElementId = state.value.elements[intent.oldPosition].id,
                     secondElementId = state.value.elements[intent.newPosition].id,
@@ -115,7 +114,7 @@ class PageViewModel @Inject constructor(
         when (val mode = state.value.mode) {
             is PageMode.Edit -> {
                 val editableElement = mode.element
-                useCase.createOrUpdateElement(state.value.pageId
+                editorUseCase.createOrUpdateElement(state.value.pageId
                     ?: return, toElementApi(editableElement))
                     .onEach {
                         fetchPageData()
@@ -137,7 +136,7 @@ class PageViewModel @Inject constructor(
     }
 
     private fun addNewElementToPage(element: Element) {
-        useCase.createOrUpdateElement(state.value.pageId ?: return, element)
+        editorUseCase.createOrUpdateElement(state.value.pageId ?: return, element)
             .onEach {
                 fetchPageData()
                 // TODO открывать сразу экран редактирования элемента после доабвления
@@ -154,9 +153,9 @@ class PageViewModel @Inject constructor(
 
     private fun fetchPageData() {
         val fetchPageFlow = if (pageId != null) {
-            useCase.fetchPageById(pageId)
+            editorUseCase.fetchPageById(pageId)
         } else {
-            useCase.fetchStartPage()
+            editorUseCase.fetchStartPage()
         }
         fetchPageFlow
             .onEach { page ->

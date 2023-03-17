@@ -14,8 +14,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
-import com.pragmadreams.redaktor.android.presentation.screen.list.CatalogView
-import com.pragmadreams.redaktor.android.presentation.screen.list.CatalogViewModel
+import com.pragmadreams.redaktor.android.presentation.screen.catalog.CatalogView
+import com.pragmadreams.redaktor.android.presentation.screen.catalog.CatalogViewModel
 import com.pragmadreams.redaktor.android.presentation.screen.page.PageView
 import com.pragmadreams.redaktor.android.presentation.screen.page.PageViewModel
 import com.pragmadreams.redaktor.android.util.composable

@@ -1,4 +1,4 @@
-package com.pragmadreams.redaktor.android.presentation.screen.list
+package com.pragmadreams.redaktor.android.presentation.screen.catalog
 
 import com.pragmadreams.redaktor.android.base.BaseViewModel
 import com.pragmadreams.redaktor.android.base.Intent
