@@ -14,13 +14,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
+import com.pragmadreams.redaktor.android.presentation.screen.list.CatalogView
+import com.pragmadreams.redaktor.android.presentation.screen.list.CatalogViewModel
 import com.pragmadreams.redaktor.android.presentation.screen.page.PageView
 import com.pragmadreams.redaktor.android.presentation.screen.page.PageViewModel
 import com.pragmadreams.redaktor.android.util.composable
 
 @Composable
 fun RootNavGraph(navController: NavHostController) {
-    NavHost(navController, startDestination = RootScreen.PageScreen.route) {
+    NavHost(navController, startDestination = RootScreen.CatalogScreen.route) {
         composable(RootScreen.PageScreen) {
             PageView().Content(hiltViewModel<PageViewModel>())
         }
@@ -38,6 +40,10 @@ fun RootNavGraph(navController: NavHostController) {
                 Text(text = "Sample screen")
             }
         }
+
+        composable(route = RootScreen.CatalogScreen) {
+            CatalogView().Content(hiltViewModel<CatalogViewModel>())
+        }
     }
 }
 
@@ -45,4 +51,6 @@ sealed class RootScreen(override val route: String) : Screen(route) {
     object PageScreen : RootScreen("/page_screen/{pageId}")
 
     object SampleScreen : RootScreen("/page/sample")
+
+    object CatalogScreen : RootScreen("/page_screen/catalog")
 }
