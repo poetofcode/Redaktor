@@ -58,6 +58,15 @@ class FileEditorRepository(
         return data.pages.first { it.id == pageId }
     }
 
+    override suspend fun fetchPages(): List<Page> {
+        val data = fetchAllData()
+        return data.pages.map {
+            it.copy(
+                elements = emptyList()
+            )
+        }
+    }
+
     override suspend fun createOrUpdateElement(pageId: String, element: Element) {
         var foundPage = dataOrDefault.pages.firstOrNull {
             it.id == pageId
@@ -99,7 +108,11 @@ class FileEditorRepository(
         saveAllData()
     }
 
-    override suspend fun reorderElements(pageId: String, firstElementId: String, secondElementId: String) {
+    override suspend fun reorderElements(
+        pageId: String,
+        firstElementId: String,
+        secondElementId: String
+    ) {
         var foundPage = dataOrDefault.pages.firstOrNull {
             it.id == pageId
         } ?: throw Exception("Page with id{$pageId} not found")

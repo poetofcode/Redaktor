@@ -66,6 +66,10 @@ internal class MockEditorRepository : EditorRepository {
         return pages.first { it.id == pageId }
     }
 
+    override suspend fun fetchPages(): List<Page> {
+        TODO("Not yet implemented")
+    }
+
     private suspend fun fetchStartPageId(): String {
         return "1"
     }

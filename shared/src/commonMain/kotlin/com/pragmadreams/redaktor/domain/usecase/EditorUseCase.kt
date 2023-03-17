@@ -10,6 +10,10 @@ import kotlinx.coroutines.flow.flow
 class EditorUseCase constructor(
     private val repository: EditorRepository
 ) {
+    fun fetchPages() : CommonFlow<List<Page>> = flow {
+        emit(repository.fetchPages())
+    }.flowOnDefaultContext()
+
     fun fetchPageById(pageId: String): CommonFlow<Page> = flow {
         emit(repository.fetchPageById(pageId))
     }.flowOnDefaultContext()
