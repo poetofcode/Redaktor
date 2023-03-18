@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.pragmadreams.redaktor.android.base.BaseViewModel
 import com.pragmadreams.redaktor.android.base.Intent
 import com.pragmadreams.redaktor.android.base.State
+import com.pragmadreams.redaktor.android.domain.model.PageUI
 import com.pragmadreams.redaktor.domain.usecase.EditorUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -18,8 +19,15 @@ class CatalogViewModel @Inject constructor(
 
     init {
         editorUseCase.fetchPages()
-            .onEach {
-                println("mylog $it")
+            .onEach { pages ->
+                updateState { copy(
+                    pages = pages.map { page ->
+                        PageUI(
+                            id = page.id,
+                            title = page.title,
+                        )
+                    }
+                ) }
             }
             .catch {
                 it.printStackTrace()
@@ -37,7 +45,7 @@ class CatalogViewModel @Inject constructor(
 }
 
 data class CatalogState(
-    val pages: List<Unit> = emptyList()
+    val pages: List<PageUI> = emptyList()
 ) : State
 
 sealed class CatalogIntent : Intent
