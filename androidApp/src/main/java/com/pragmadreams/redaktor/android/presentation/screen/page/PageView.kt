@@ -22,6 +22,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.pragmadreams.redaktor.android.base.ComposeView
+import com.pragmadreams.redaktor.android.domain.model.ActionUI
+import com.pragmadreams.redaktor.android.domain.model.ElementUI
+import com.pragmadreams.redaktor.android.domain.model.PageMode
 import com.pragmadreams.redaktor.android.util.compose.drag_and_drop_list.DragDropList
 
 class PageView : ComposeView<PageState, PageIntent>() {

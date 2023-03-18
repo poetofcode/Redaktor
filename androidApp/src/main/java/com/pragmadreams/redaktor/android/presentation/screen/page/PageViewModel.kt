@@ -5,6 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.pragmadreams.redaktor.android.base.BaseViewModel
 import com.pragmadreams.redaktor.android.base.Intent
 import com.pragmadreams.redaktor.android.base.State
+import com.pragmadreams.redaktor.android.domain.model.ActionUI
+import com.pragmadreams.redaktor.android.domain.model.ElementUI
+import com.pragmadreams.redaktor.android.domain.model.PageMode
 import com.pragmadreams.redaktor.android.navigation.NavigationEffect
 import com.pragmadreams.redaktor.android.navigation.RootScreen
 import com.pragmadreams.redaktor.domain.usecase.EditorUseCase
@@ -252,46 +255,4 @@ data class PageState(
     val draggableIndex: Int? = null,
 ) : State {
     val isDragging: Boolean get() = draggableIndex != null
-}
-
-
-sealed class ActionUI {
-    object Edit : ActionUI()
-    object Delete : ActionUI()
-    object BindLink : ActionUI()
-
-    companion object {
-        val BY_DEFAULT: List<ActionUI> = emptyList()
-    }
-}
-
-sealed class ElementUI(
-    open val id: String,
-    open val actions: List<ActionUI> = ActionUI.BY_DEFAULT,
-) {
-
-    data class Text(
-        override val id: String,
-        val text: String,
-    ) : ElementUI(id)
-
-    data class Link(
-        override val id: String,
-        val text: String,
-        val relatedPageId: String?,
-    ) : ElementUI(id) {
-        override val actions: List<ActionUI> = listOf(ActionUI.BindLink)
-
-        val isBound: Boolean
-            get() {
-                return relatedPageId != null
-            }
-    }
-
-}
-
-sealed class PageMode {
-    object View : PageMode()
-    object Select : PageMode()
-    data class Edit(val element: ElementUI) : PageMode()
 }
