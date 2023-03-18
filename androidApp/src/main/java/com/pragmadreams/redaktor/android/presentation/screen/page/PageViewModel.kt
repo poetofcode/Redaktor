@@ -35,14 +35,6 @@ class PageViewModel @Inject constructor(
 
     override fun handleIntent(intent: PageIntent) {
         when (intent) {
-            PageIntent.SomeUserIntent -> {
-                /*
-                println("mylog Intent: $intent")
-                updateState { copy(
-                    textState = state.value.textState + " NEW"
-                ) }
-                */
-            }
             PageIntent.ToSampleScreen -> {
                 offerEffect(NavigationEffect.Navigate(RootScreen.SampleScreen))
             }
@@ -238,7 +230,6 @@ sealed class PageIntent : Intent {
 
     object OnFinishDragging : PageIntent()
 
-    object SomeUserIntent : PageIntent()
     object ToSampleScreen : PageIntent()
     object OnStartEditModeClick : PageIntent()
     object OnFinishEditModeClick : PageIntent()

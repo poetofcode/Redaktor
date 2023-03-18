@@ -20,6 +20,10 @@ class CatalogViewModel @Inject constructor(
 ) : BaseViewModel<CatalogState, CatalogIntent>() {
 
     init {
+        fetchData()
+    }
+
+    private fun fetchData() {
         editorUseCase.fetchPages()
             .onEach { pages ->
                 updateState {
@@ -50,9 +54,16 @@ class CatalogViewModel @Inject constructor(
             }
 
             CatalogIntent.OnAddPageClick -> {
-                // TODO
+                addNewPage()
             }
         }
+    }
+
+    private fun addNewPage() {
+        editorUseCase.createPage()
+            .onEach { fetchData() }
+            .catch { it.printStackTrace() }
+            .launchIn(viewModelScope)
     }
 
     override fun createState(): CatalogState = CatalogState()

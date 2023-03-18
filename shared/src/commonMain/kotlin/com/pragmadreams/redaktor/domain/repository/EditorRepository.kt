@@ -19,4 +19,8 @@ interface EditorRepository {
 
     suspend fun reorderElements(pageId: String, firstElementId: String, secondElementId: String)
 
+    suspend fun createPage()
+
+    suspend fun updatePage(pageId: String, title: String)
+
 }

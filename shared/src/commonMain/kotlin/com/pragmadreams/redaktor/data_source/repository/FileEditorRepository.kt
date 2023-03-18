@@ -135,6 +135,20 @@ class FileEditorRepository(
         saveAllData()
     }
 
+    override suspend fun createPage() {
+        val newPage = Page.createEmptyPage().copy(
+            id = createUUID()
+        )
+        dataOrDefault = dataOrDefault.copy(
+            pages = dataOrDefault.pages.toMutableList().apply { add(newPage) }
+        )
+        saveAllData()
+    }
+
+    override suspend fun updatePage(pageId: String, title: String) {
+        // TODO implement
+    }
+
     private suspend fun createStartPage(): Page {
         val pageId = createUUID()
         val page = Page(
