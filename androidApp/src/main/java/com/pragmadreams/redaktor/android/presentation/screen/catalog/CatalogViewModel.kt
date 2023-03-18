@@ -48,11 +48,14 @@ class CatalogViewModel @Inject constructor(
                     )
                 )
             }
+
+            CatalogIntent.OnAddPageClick -> {
+                // TODO
+            }
         }
     }
 
     override fun createState(): CatalogState = CatalogState()
-
 
 }
 
@@ -61,5 +64,7 @@ data class CatalogState(
 ) : State
 
 sealed class CatalogIntent : Intent {
+    object OnAddPageClick : CatalogIntent()
+
     class OnPageClick(val pageId: String) : CatalogIntent()
 }

@@ -7,7 +7,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.Divider
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,12 +78,16 @@ class CatalogView : ComposeView<CatalogState, CatalogIntent>() {
 
             Spacer(modifier = Modifier.weight(1f))
 
-//            Button(
-//                modifier = Modifier.padding(horizontal = 12.dp),
-//                onClick = { /* TODO */ }
-//            ) {
-//                Text(text = "Стартовая")
-//            }
+            Button(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                onClick = { offerIntent(CatalogIntent.OnAddPageClick) }
+            ) {
+                Icon(
+                    modifier = Modifier.padding(2.dp),
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = null
+                )
+            }
         }
     }
 
