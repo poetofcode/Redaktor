@@ -11,9 +11,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -116,15 +114,42 @@ class CatalogView : ComposeView<CatalogState, CatalogIntent>() {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Button(
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                onClick = { offerIntent(CatalogIntent.OnAddPageClick) }
-            ) {
-                Icon(
-                    modifier = Modifier.padding(2.dp),
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = null
-                )
+            if (!state.isEditing) {
+                Button(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                    onClick = { offerIntent(CatalogIntent.OnAddPageClick) }
+                ) {
+                    Icon(
+                        modifier = Modifier.padding(2.dp),
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = null
+                    )
+                }
+            } else {
+                Row(/* horizontalArrangement = Arrangement.spacedBy(10.dp) */) {
+                    Button(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        onClick = { offerIntent(CatalogIntent.OnApplyEditClick) }
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(2.dp),
+                            imageVector = Icons.Filled.Done,
+                            contentDescription = null
+                        )
+                    }
+                    Button(
+                        modifier = Modifier
+                            .padding(vertical = 8.dp)
+                            .padding(start = 8.dp, end = 12.dp),
+                        onClick = { offerIntent(CatalogIntent.OnCancelEditClick) }
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(2.dp),
+                            imageVector = Icons.Filled.Cancel,
+                            contentDescription = null
+                        )
+                    }
+                }
             }
         }
     }
