@@ -6,15 +6,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
@@ -47,14 +45,30 @@ class CatalogView : ComposeView<CatalogState, CatalogIntent>() {
                             .fillMaxSize()
                             .padding(horizontal = 16.dp, vertical = 16.dp)
                     ) {
-                        Text(
-                            text = page.title,
-                            modifier = Modifier
-                                .padding(),
-                            color = Color.Black
-                        )
-                        Spacer(Modifier.weight(1f))
-                        ActionList(page = page)
+                        if (state.isEditing && state.editablePage!!.id == page.id) {
+                            OutlinedTextField(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(Color.Transparent),
+                                    // .focusRequester(focusRequester),
+                                value = state.editablePage.title,
+                                onValueChange = {
+                                    offerIntent(
+                                        CatalogIntent.OnEditablePageChanged(
+                                            newPage = state.editablePage.copy(title = it)
+                                        )
+                                    )
+                                })
+                        } else {
+                            Text(
+                                text = page.title,
+                                modifier = Modifier
+                                    .padding(),
+                                color = Color.Black
+                            )
+                            Spacer(Modifier.weight(1f))
+                            ActionList(page = page)
+                        }
                     }
                     Divider(Modifier.fillMaxSize())
                 }

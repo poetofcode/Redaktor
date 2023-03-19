@@ -71,11 +71,24 @@ class CatalogViewModel @Inject constructor(
             CatalogIntent.OnCancelEditClick -> {
                 updateState { copy(editablePage = null) }
             }
+            is CatalogIntent.OnEditablePageChanged -> {
+                updateState { copy(editablePage = intent.newPage) }
+            }
         }
     }
 
     private fun applyChanges() {
-        // TODO implement
+        val updatedPage = state.value.editablePage?.copy() ?: return
+        updateState { copy(
+            editablePage = null,
+            pages = state.value.pages.map {
+                if (it.id == updatedPage.id) {
+                    updatedPage
+                } else {
+                    it
+                }
+            }
+        ) }
     }
 
     private fun addNewPage() {
@@ -106,4 +119,5 @@ sealed class CatalogIntent : Intent {
     class OnEditClick(val pageId: String) : CatalogIntent()
 
     class OnDeleteClick(val pageId: String) : CatalogIntent()
+    class OnEditablePageChanged(val newPage: PageUI) : CatalogIntent()
 }
