@@ -56,6 +56,12 @@ class CatalogViewModel @Inject constructor(
             CatalogIntent.OnAddPageClick -> {
                 addNewPage()
             }
+            is CatalogIntent.OnDeleteClick -> {
+
+            }
+            is CatalogIntent.OnEditClick -> {
+
+            }
         }
     }
 
@@ -78,4 +84,7 @@ sealed class CatalogIntent : Intent {
     object OnAddPageClick : CatalogIntent()
 
     class OnPageClick(val pageId: String) : CatalogIntent()
+    class OnEditClick(pageId: String) : CatalogIntent()
+
+    class OnDeleteClick(pageId: String) : CatalogIntent()
 }
