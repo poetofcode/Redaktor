@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import com.pragmadreams.redaktor.android.base.ComposeView
 import com.pragmadreams.redaktor.android.domain.model.PageMode
@@ -65,12 +66,21 @@ class CatalogView : ComposeView<CatalogState, CatalogIntent>() {
                                     )
                                 })
                         } else {
-                            Text(
-                                text = page.title,
-                                modifier = Modifier
-                                    .padding(),
-                                color = Color.Black
-                            )
+                            if (!page.isNew) {
+                                Text(
+                                    text = page.title,
+                                    modifier = Modifier
+                                        .padding(),
+                                    color = Color.Black
+                                )
+                            } else {
+                                Text(
+                                    text = "Введите название",
+                                    modifier = Modifier.padding(),
+                                    color = Color.LightGray,
+                                    fontStyle = FontStyle.Italic,
+                                )
+                            }
                             Spacer(Modifier.weight(1f))
                             ActionList(page = page)
                         }
