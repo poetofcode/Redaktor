@@ -146,7 +146,19 @@ class FileEditorRepository(
     }
 
     override suspend fun updatePage(pageId: String, title: String) {
-        // TODO implement
+        var found = false
+        dataOrDefault = dataOrDefault.copy(
+            pages = dataOrDefault.pages.map {
+                if (it.id != pageId) {
+                    it
+                } else {
+                    found = true
+                    it.copy(title = title)
+                }
+            }
+        )
+        if (!found) throw Exception("Page with id=\"${pageId}\" not found!")
+        saveAllData()
     }
 
     private suspend fun createStartPage(): Page {

@@ -61,9 +61,11 @@ class CatalogViewModel @Inject constructor(
             }
             is CatalogIntent.OnEditClick -> {
                 val selectedPage = state.value.pages.first { it.id == intent.pageId }
-                updateState { copy(
-                    editablePage = selectedPage
-                ) }
+                updateState {
+                    copy(
+                        editablePage = selectedPage
+                    )
+                }
             }
             CatalogIntent.OnApplyEditClick -> {
                 applyChanges()
@@ -79,16 +81,23 @@ class CatalogViewModel @Inject constructor(
 
     private fun applyChanges() {
         val updatedPage = state.value.editablePage?.copy() ?: return
-        updateState { copy(
-            editablePage = null,
-            pages = state.value.pages.map {
-                if (it.id == updatedPage.id) {
-                    updatedPage
-                } else {
-                    it
+        editorUseCase.updatePage(pageId = updatedPage.id, title = updatedPage.title)
+            .onEach {
+                updateState {
+                    copy(
+                        editablePage = null,
+                        pages = state.value.pages.map {
+                            if (it.id == updatedPage.id) {
+                                updatedPage
+                            } else {
+                                it
+                            }
+                        }
+                    )
                 }
             }
-        ) }
+            .catch { it.printStackTrace() }
+            .launchIn(viewModelScope)
     }
 
     private fun addNewPage() {

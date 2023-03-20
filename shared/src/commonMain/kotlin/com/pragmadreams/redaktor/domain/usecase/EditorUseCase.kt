@@ -21,10 +21,7 @@ class EditorUseCase constructor(
     }.flowOnDefaultContext()
 
     fun updatePage(pageId: String, title: String) : CommonFlow<Unit> = flow {
-
-        // TODO call repository
-
-
+        repository.updatePage(pageId, title)
         emit(Unit)
     }.flowOnDefaultContext()
 
