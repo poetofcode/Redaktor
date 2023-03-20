@@ -37,9 +37,14 @@ class CatalogView : ComposeView<CatalogState, CatalogIntent>() {
         val offerIntent = LocalOfferIntent.current
         LazyColumn {
             items(state.pages) { page ->
-                Column(Modifier.clickable {
-                    offerIntent(CatalogIntent.OnPageClick(pageId = page.id))
-                }) {
+                Column(Modifier.then(
+                    if (!state.isEditing) {
+                        Modifier.clickable {
+                            offerIntent(CatalogIntent.OnPageClick(pageId = page.id))
+                        }
+                    } else Modifier
+                )
+                ) {
                     Row(
                         Modifier
                             .fillMaxSize()
@@ -50,7 +55,7 @@ class CatalogView : ComposeView<CatalogState, CatalogIntent>() {
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .background(Color.Transparent),
-                                    // .focusRequester(focusRequester),
+                                // .focusRequester(focusRequester),
                                 value = state.editablePage.title,
                                 onValueChange = {
                                     offerIntent(
