@@ -79,17 +79,15 @@ class PageView : ComposeView<PageState, PageIntent>() {
         coroutineScope: CoroutineScope,
         modalSheetState: ModalBottomSheetState
     ) {
-        Column(
-            //...
-        ) {
-            //...
+        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
 
             Button(
+                modifier = Modifier.padding(bottom = 20.dp),
                 onClick = {
                     coroutineScope.launch { modalSheetState.hide() }
                 }
             ) {
-                Text(text = "Hide Sheet")
+                Text(text = "Закрыть")
             }
         }
     }
