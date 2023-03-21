@@ -68,7 +68,9 @@ class PageView : ComposeView<PageState, PageIntent>() {
                 ModalBottomSheetContent(coroutineScope, modalSheetState)
             }
         ) {
-            PageContent(focusRequester)
+            PageContent(focusRequester, onOptionButtonClick = {
+                coroutineScope.launch { modalSheetState.show() }
+            })
         }
     }
 
@@ -93,7 +95,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
     }
 
     @Composable
-    private fun PageContent(focusRequester: FocusRequester) {
+    private fun PageContent(focusRequester: FocusRequester, onOptionButtonClick: () -> Unit) {
         Column {
             Toolbar()
             Box(Modifier.fillMaxSize()) {
@@ -108,16 +110,20 @@ class PageView : ComposeView<PageState, PageIntent>() {
                         .align(Alignment.BottomCenter)
                 )
                 AddElementButton(
-                    Modifier
+                    modifier = Modifier
                         .height(floatingToolbarHeight)
-                        .align(Alignment.BottomCenter)
+                        .align(Alignment.BottomCenter),
+                    onOptionButtonClick = onOptionButtonClick
                 )
             }
         }
     }
 
     @Composable
-    private fun AddElementButton(modifier: Modifier = Modifier) {
+    private fun AddElementButton(
+        modifier: Modifier = Modifier,
+        onOptionButtonClick: () -> Unit,
+    ) {
         val state = LocalState.current
         val offerIntent = LocalOfferIntent.current
         when (state.mode) {
@@ -140,7 +146,9 @@ class PageView : ComposeView<PageState, PageIntent>() {
                         .fillMaxHeight()
                         .width(50.dp)
                         .background(Color.Green)
-                        .clickable { offerIntent(PageIntent.OnOpenElementTypePicker) }
+                        .clickable {
+                            onOptionButtonClick()
+                        }
                         .padding(5.dp)
                     ) {
                         Icon(
