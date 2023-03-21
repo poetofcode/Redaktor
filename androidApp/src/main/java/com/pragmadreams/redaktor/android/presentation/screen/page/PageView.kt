@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -26,8 +27,9 @@ import com.pragmadreams.redaktor.android.base.ComposeView
 import com.pragmadreams.redaktor.android.domain.model.ActionUI
 import com.pragmadreams.redaktor.android.domain.model.ElementUI
 import com.pragmadreams.redaktor.android.domain.model.PageMode
-import com.pragmadreams.redaktor.android.presentation.screen.catalog.CatalogIntent
 import com.pragmadreams.redaktor.android.util.compose.drag_and_drop_list.DragDropList
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 class PageView : ComposeView<PageState, PageIntent>() {
 
@@ -52,6 +54,46 @@ class PageView : ComposeView<PageState, PageIntent>() {
 
         //      TODO АКТУАЛЬНО ЛИ ДАННОЕ TO_DO ???
 
+        val coroutineScope = rememberCoroutineScope()
+        val modalSheetState = rememberModalBottomSheetState(
+            initialValue = ModalBottomSheetValue.Hidden,
+            confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded },
+            skipHalfExpanded = true,
+        )
+
+        ModalBottomSheetLayout(
+            sheetState = modalSheetState,
+            sheetShape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
+            sheetContent = {
+                ModalBottomSheetContent(coroutineScope, modalSheetState)
+            }
+        ) {
+            PageContent(focusRequester)
+        }
+    }
+
+    @Composable
+    private fun ModalBottomSheetContent(
+        coroutineScope: CoroutineScope,
+        modalSheetState: ModalBottomSheetState
+    ) {
+        Column(
+            //...
+        ) {
+            //...
+
+            Button(
+                onClick = {
+                    coroutineScope.launch { modalSheetState.hide() }
+                }
+            ) {
+                Text(text = "Hide Sheet")
+            }
+        }
+    }
+
+    @Composable
+    private fun PageContent(focusRequester: FocusRequester) {
         Column {
             Toolbar()
             Box(Modifier.fillMaxSize()) {
