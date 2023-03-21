@@ -1,5 +1,6 @@
 package com.pragmadreams.redaktor.android.presentation.screen.catalog
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -30,6 +31,9 @@ class CatalogView : ComposeView<CatalogState, CatalogIntent>() {
 
     @Composable
     override fun Layout() {
+        val state = LocalState.current
+        val offerIntent = LocalOfferIntent.current
+        BackHandler(enabled = state.isEditing) { offerIntent(CatalogIntent.OnCancelEditClick) }
         Column {
             Toolbar()
             PageList()
