@@ -250,6 +250,7 @@ data class PageState(
     val elements: List<ElementUI> = emptyList(),
     val mode: PageMode = PageMode.Select,
     val draggableIndex: Int? = null,
+    val elementType: ElementType = ElementType.TEXT,
 ) : State {
     val isDragging: Boolean get() = draggableIndex != null
 }
