@@ -42,4 +42,13 @@ data class LinkElement(
 
     @SerialName("related_page_id")
     val relatedPageId: String?,
-) : Element()
+) : Element() {
+
+    companion object {
+        fun createEmpty(): Element = LinkElement(
+            id = String(),
+            text = String(),
+            relatedPageId = null,
+        )
+    }
+}

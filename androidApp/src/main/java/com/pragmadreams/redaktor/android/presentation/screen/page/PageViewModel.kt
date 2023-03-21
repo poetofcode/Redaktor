@@ -132,7 +132,11 @@ class PageViewModel @Inject constructor(
     }
 
     private fun onAddNewElementClick() {
-        addNewElementToPage(TextElement.createEmpty())
+        val elementToAdd = when (state.value.elementType) {
+            ElementType.TEXT -> TextElement.createEmpty()
+            ElementType.LINK -> LinkElement.createEmpty()
+        }
+        addNewElementToPage(elementToAdd)
     }
 
     private fun addNewElementToPage(element: Element) {
