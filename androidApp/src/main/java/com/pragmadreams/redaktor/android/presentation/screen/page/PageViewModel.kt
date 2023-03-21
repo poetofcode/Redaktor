@@ -105,7 +105,7 @@ class PageViewModel @Inject constructor(
             is PageIntent.OnStartDragging -> updateState { copy(draggableIndex = intent.itemIndex) }
 
             is PageIntent.OnSelectElementType -> {
-                // TODO
+                updateState { copy(elementType = intent.elementType) }
             }
         }
     }
