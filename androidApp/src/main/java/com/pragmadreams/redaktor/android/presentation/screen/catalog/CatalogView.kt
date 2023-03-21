@@ -10,6 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
@@ -71,15 +72,15 @@ class CatalogView : ComposeView<CatalogState, CatalogIntent>() {
                                     text = page.title,
                                     modifier = Modifier
                                         .padding(),
-                                    color = Color.Black
                                 )
                             } else {
-                                Text(
-                                    text = "Введите название",
-                                    modifier = Modifier.padding(),
-                                    color = Color.LightGray,
-                                    fontStyle = FontStyle.Italic,
-                                )
+                                CompositionLocalProvider(LocalContentAlpha provides 0.5f) {
+                                    Text(
+                                        text = "Введите название",
+                                        modifier = Modifier.padding(),
+                                        fontStyle = FontStyle.Italic,
+                                    )
+                                }
                             }
                             Spacer(Modifier.weight(1f))
                             ActionList(page = page)
