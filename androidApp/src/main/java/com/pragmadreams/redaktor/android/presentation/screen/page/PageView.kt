@@ -27,6 +27,7 @@ import com.pragmadreams.redaktor.android.base.ComposeView
 import com.pragmadreams.redaktor.android.domain.model.ActionUI
 import com.pragmadreams.redaktor.android.domain.model.ElementUI
 import com.pragmadreams.redaktor.android.domain.model.PageMode
+import com.pragmadreams.redaktor.android.presentation.screen.page.misc.ElementType
 import com.pragmadreams.redaktor.android.util.compose.drag_and_drop_list.DragDropList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -79,10 +80,16 @@ class PageView : ComposeView<PageState, PageIntent>() {
         coroutineScope: CoroutineScope,
         modalSheetState: ModalBottomSheetState
     ) {
+        val offerIntent = LocalOfferIntent.current
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(Modifier.size(20.dp))
 
-            ElementTypeItem("Текстовый элемент", {})
+            elementTypes.forEach {
+                ElementTypeItem(titleFromType(elementType = it)) {
+                    coroutineScope.launch { modalSheetState.hide() }
+                    offerIntent(PageIntent.OnSelectElementType(elementType = it))
+                }
+            }
 
             Button(
                 modifier = Modifier.padding(bottom = 20.dp),
@@ -90,8 +97,15 @@ class PageView : ComposeView<PageState, PageIntent>() {
                     coroutineScope.launch { modalSheetState.hide() }
                 }
             ) {
-                Text(text = "Закрыть")
+                Text(text = "Отмена")
             }
+        }
+    }
+
+    private fun titleFromType(elementType: ElementType): String {
+        return when (elementType) {
+            ElementType.TEXT -> "Текст"
+            ElementType.LINK -> "Ссылка"
         }
     }
 
@@ -102,7 +116,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
                 .fillMaxWidth()
                 .height(50.dp)
                 .padding(bottom = 8.dp, start = 16.dp, end = 16.dp)
-                .background(Color.LightGray, shape = RoundedCornerShape(5.dp))
+                .background(Color.LightGray.copy(alpha = 0.5f), shape = RoundedCornerShape(5.dp))
                 .clickable { onClick() },
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically)
@@ -453,6 +467,10 @@ class PageView : ComposeView<PageState, PageIntent>() {
             mode = PageMode.View,
         )
         PageView().Content(previewState)
+    }
+
+    companion object {
+        val elementTypes = listOf(ElementType.TEXT, ElementType.LINK)
     }
 
 }

@@ -10,6 +10,7 @@ import com.pragmadreams.redaktor.android.domain.model.ElementUI
 import com.pragmadreams.redaktor.android.domain.model.PageMode
 import com.pragmadreams.redaktor.android.navigation.NavigationEffect
 import com.pragmadreams.redaktor.android.navigation.RootScreen
+import com.pragmadreams.redaktor.android.presentation.screen.page.misc.ElementType
 import com.pragmadreams.redaktor.domain.usecase.EditorUseCase
 import com.pragmadreams.redaktor.entity.Element
 import com.pragmadreams.redaktor.entity.LinkElement
@@ -103,8 +104,8 @@ class PageViewModel @Inject constructor(
             PageIntent.OnFinishDragging -> updateState { copy(draggableIndex = null) }
             is PageIntent.OnStartDragging -> updateState { copy(draggableIndex = intent.itemIndex) }
 
-            PageIntent.OnOpenElementTypePicker -> {
-                TODO()
+            is PageIntent.OnSelectElementType -> {
+                // TODO
             }
         }
     }
@@ -231,6 +232,7 @@ sealed class PageIntent : Intent {
     class OnReorderListElement(val oldPosition: Int, val newPosition: Int) : PageIntent()
 
     class OnStartDragging(val itemIndex: Int) : PageIntent()
+    class OnSelectElementType(val elementType: ElementType) : PageIntent()
 
     object OnFinishDragging : PageIntent()
 
@@ -240,7 +242,6 @@ sealed class PageIntent : Intent {
     object OnApplyElementChangesClick : PageIntent()
     object OnDiscardChangesElementClick : PageIntent()
     object OnAddNewElementClick : PageIntent()
-    object OnOpenElementTypePicker : PageIntent()
 }
 
 data class PageState(
