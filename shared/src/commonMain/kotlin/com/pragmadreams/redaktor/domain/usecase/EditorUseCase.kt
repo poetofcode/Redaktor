@@ -6,10 +6,25 @@ import com.pragmadreams.redaktor.entity.Page
 import com.pragmadreams.redaktor.util.CommonFlow
 import com.pragmadreams.redaktor.util.flowOnDefaultContext
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 class EditorUseCase constructor(
     private val repository: EditorRepository
 ) {
+    fun fetchPages() : CommonFlow<List<Page>> = flow {
+        emit(repository.fetchPages())
+    }.flowOnDefaultContext()
+
+    fun createPage() : CommonFlow<Unit> = flow {
+        repository.createPage()
+        emit(Unit)
+    }.flowOnDefaultContext()
+
+    fun updatePage(pageId: String, title: String) : CommonFlow<Unit> = flow {
+        repository.updatePage(pageId, title)
+        emit(Unit)
+    }.flowOnDefaultContext()
+
     fun fetchPageById(pageId: String): CommonFlow<Page> = flow {
         emit(repository.fetchPageById(pageId))
     }.flowOnDefaultContext()

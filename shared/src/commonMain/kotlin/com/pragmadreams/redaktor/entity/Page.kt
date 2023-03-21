@@ -13,4 +13,19 @@ data class Page(
 
     @SerialName("elements")
     val elements: List<Element>,
-)
+
+    @SerialName("is_new")
+    var isNew: Boolean = false
+) {
+    companion object {
+        fun createEmptyPage() : Page {
+            return Page(
+                id = String(),
+                title = String(),
+                elements = emptyList(),
+            ).apply {
+                isNew = true
+            }
+        }
+    }
+}

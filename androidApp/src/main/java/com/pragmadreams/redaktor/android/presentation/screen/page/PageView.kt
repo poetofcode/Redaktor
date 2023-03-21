@@ -1,5 +1,6 @@
 package com.pragmadreams.redaktor.android.presentation.screen.page
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,12 +23,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.pragmadreams.redaktor.android.base.ComposeView
+import com.pragmadreams.redaktor.android.domain.model.ActionUI
+import com.pragmadreams.redaktor.android.domain.model.ElementUI
+import com.pragmadreams.redaktor.android.domain.model.PageMode
+import com.pragmadreams.redaktor.android.presentation.screen.catalog.CatalogIntent
 import com.pragmadreams.redaktor.android.util.compose.drag_and_drop_list.DragDropList
 
 class PageView : ComposeView<PageState, PageIntent>() {
 
     @Composable
     override fun Layout() {
+        val state = LocalState.current
+        val offerIntent = LocalOfferIntent.current
+        BackHandler(enabled = state.mode != PageMode.View) {
+            when (state.mode) {
+                is PageMode.Edit -> offerIntent(PageIntent.OnDiscardChangesElementClick)
+                PageMode.Select -> offerIntent(PageIntent.OnFinishEditModeClick)
+                else -> Unit
+            }
+        }
+
         val focusRequester = remember { FocusRequester() }
 
         // TODO Запилить что-то вроде CollectEffects и в нём обозревать эффект на старт редактирования
