@@ -80,6 +80,9 @@ class PageView : ComposeView<PageState, PageIntent>() {
         modalSheetState: ModalBottomSheetState
     ) {
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Spacer(Modifier.size(20.dp))
+
+            ElementTypeItem("Текстовый элемент", {})
 
             Button(
                 modifier = Modifier.padding(bottom = 20.dp),
@@ -89,6 +92,25 @@ class PageView : ComposeView<PageState, PageIntent>() {
             ) {
                 Text(text = "Закрыть")
             }
+        }
+    }
+
+    @Composable
+    private fun ElementTypeItem(title: String, onClick: () -> Unit) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(bottom = 8.dp, start = 16.dp, end = 16.dp)
+                .background(Color.LightGray, shape = RoundedCornerShape(5.dp))
+                .clickable { onClick() },
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically)
+        {
+            Text(
+                text = title,
+                modifier = Modifier.padding()
+            )
         }
     }
 
