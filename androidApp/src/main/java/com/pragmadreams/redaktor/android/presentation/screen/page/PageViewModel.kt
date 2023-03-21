@@ -102,6 +102,10 @@ class PageViewModel @Inject constructor(
             }
             PageIntent.OnFinishDragging -> updateState { copy(draggableIndex = null) }
             is PageIntent.OnStartDragging -> updateState { copy(draggableIndex = intent.itemIndex) }
+
+            PageIntent.OnOpenElementTypePicker -> {
+                TODO()
+            }
         }
     }
 
@@ -236,6 +240,7 @@ sealed class PageIntent : Intent {
     object OnApplyElementChangesClick : PageIntent()
     object OnDiscardChangesElementClick : PageIntent()
     object OnAddNewElementClick : PageIntent()
+    object OnOpenElementTypePicker : PageIntent()
 }
 
 data class PageState(

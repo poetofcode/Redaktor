@@ -123,16 +123,29 @@ class PageView : ComposeView<PageState, PageIntent>() {
         when (state.mode) {
             is PageMode.Select -> {
                 Row(modifier.fillMaxWidth()) {
-                    Box(modifier = modifier
-                        .fillMaxWidth()
+                    Box(modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(1f)
                         .background(Color.Cyan)
-                        .clickable {
-                            offerIntent(PageIntent.OnAddNewElementClick)
-                        }
-                        .padding(5.dp)) {
+                        .clickable { offerIntent(PageIntent.OnAddNewElementClick) }
+                        .padding(5.dp)
+                    ) {
                         Icon(
                             modifier = Modifier.align(Alignment.Center),
                             imageVector = Icons.Filled.Add,
+                            contentDescription = null
+                        )
+                    }
+                    Box(modifier = Modifier
+                        .fillMaxHeight()
+                        .width(50.dp)
+                        .background(Color.Green)
+                        .clickable { offerIntent(PageIntent.OnOpenElementTypePicker) }
+                        .padding(5.dp)
+                    ) {
+                        Icon(
+                            modifier = Modifier.align(Alignment.Center),
+                            imageVector = Icons.Filled.ArrowDropUp,
                             contentDescription = null
                         )
                     }
