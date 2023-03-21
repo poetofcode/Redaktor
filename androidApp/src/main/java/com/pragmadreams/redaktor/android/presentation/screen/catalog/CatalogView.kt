@@ -11,8 +11,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -37,6 +40,7 @@ class CatalogView : ComposeView<CatalogState, CatalogIntent>() {
     private fun PageList() {
         val state = LocalState.current
         val offerIntent = LocalOfferIntent.current
+        val focusRequester = remember { FocusRequester() }
         LazyColumn {
             items(state.pages) { page ->
                 Column(Modifier.then(
@@ -56,8 +60,8 @@ class CatalogView : ComposeView<CatalogState, CatalogIntent>() {
                             OutlinedTextField(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(Color.Transparent),
-                                // .focusRequester(focusRequester),
+                                    .background(Color.Transparent)
+                                    .focusRequester(focusRequester),
                                 value = state.editablePage.title,
                                 onValueChange = {
                                     offerIntent(
@@ -66,6 +70,9 @@ class CatalogView : ComposeView<CatalogState, CatalogIntent>() {
                                         )
                                     )
                                 })
+                            LaunchedEffect(Unit) {
+                                focusRequester.requestFocus()
+                            }
                         } else {
                             if (!page.isNew) {
                                 Text(
@@ -156,7 +163,7 @@ class CatalogView : ComposeView<CatalogState, CatalogIntent>() {
                     )
                 }
             } else {
-                Row(/* horizontalArrangement = Arrangement.spacedBy(10.dp) */) {
+                Row {
                     Button(
                         modifier = Modifier.padding(vertical = 8.dp),
                         onClick = { offerIntent(CatalogIntent.OnApplyEditClick) }
