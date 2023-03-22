@@ -10,4 +10,9 @@ class Hub @Inject constructor() {
         MutableSharedFlow()
     }
 
+    // serves to transfer effects between screens
+    val intermediateEffectFlow : MutableSharedFlow<Effect> by lazy {
+        MutableSharedFlow()
+    }
+
 }
