@@ -36,6 +36,7 @@ abstract class ComposeView<StateType : State, IntentType : Intent> {
 
     @Composable
     fun Content(viewModel: BaseViewModel<StateType, IntentType>) {
+        viewModel.onViewReady()
         Content(state = viewModel.state.value, offerIntent = viewModel::handleIntent)
     }
 

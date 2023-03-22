@@ -18,11 +18,27 @@ abstract class BaseViewModel<S: State, I: Intent> : ViewModel() {
     abstract fun handleIntent(intent: I)
     abstract fun createState(): S
 
+    fun onViewReady() {
+        viewModelScope.launch {
+            hub.intermediateEffectFlow.collect {
+                handleIntermediateEffect(it)
+            }
+        }
+    }
+
+    open fun handleIntermediateEffect(effect: Effect) {
+        // It is overridden in children
+    }
+
     fun updateState(updater: S.() -> S) {
         state.value = state.value.updater()
     }
 
     fun offerEffect(effect: Effect) {
         viewModelScope.launch { hub.effectFlow.emit(effect) }
+    }
+
+    fun offerIntermediateEffect(effect: Effect) {
+        viewModelScope.launch { hub.intermediateEffectFlow.emit(effect) }
     }
 }
