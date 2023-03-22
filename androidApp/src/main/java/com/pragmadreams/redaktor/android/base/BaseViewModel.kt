@@ -6,10 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pragmadreams.redaktor.android.shared.Hub
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 abstract class BaseViewModel<S: State, I: Intent> : ViewModel() {
 
     val state: MutableState<S> by lazy { mutableStateOf(createState()) }
+
+    @Inject
+    lateinit var hub : Hub
 
     abstract fun handleIntent(intent: I)
     abstract fun createState(): S
@@ -19,6 +23,6 @@ abstract class BaseViewModel<S: State, I: Intent> : ViewModel() {
     }
 
     fun offerEffect(effect: Effect) {
-        viewModelScope.launch { Hub.effectFlow.emit(effect) }
+        viewModelScope.launch { hub.effectFlow.emit(effect) }
     }
 }
