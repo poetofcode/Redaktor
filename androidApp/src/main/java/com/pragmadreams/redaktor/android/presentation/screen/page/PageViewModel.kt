@@ -115,7 +115,22 @@ class PageViewModel @Inject constructor(
     override fun handleIntermediateEffect(effect: Effect) {
         when (effect) {
             is OnPagePickedEffect -> {
-                println("mylog ${effect.pageId}")
+                val currentMode = state.value.mode
+                if (currentMode !is PageMode.Edit) {
+                    return
+                }
+                val editableElement = currentMode.element
+                if (editableElement !is ElementUI.Link) {
+                    return
+                }
+                updateState {
+                    copy(
+                        mode = PageMode.Edit(
+                            element = editableElement.copy(relatedPageId = effect.pageId)
+                        )
+                    )
+                }
+                applyElementChanges()
             }
             else -> Unit
         }
