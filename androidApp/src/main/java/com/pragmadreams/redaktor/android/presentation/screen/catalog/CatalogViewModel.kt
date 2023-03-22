@@ -27,6 +27,8 @@ class CatalogViewModel @Inject constructor(
     private fun fetchData() {
         editorUseCase.fetchPages()
             .onEach { pages ->
+                println("mylog Pages: ${pages}")
+
                 updateState {
                     copy(
                         pages = pages.map { page ->
@@ -81,7 +83,7 @@ class CatalogViewModel @Inject constructor(
                 updateState { copy(isPicker = intent.isPicker) }
             }
             is CatalogIntent.OnBindLink -> {
-                offerIntermediateEffect(OnPagePickedEffect(pageId = intent.pageId))
+                offerIntermediateEffect(OnPagePickedEffect(page = intent.page))
                 offerEffect(NavigationEffect.NavigateUp)
             }
         }
@@ -139,5 +141,5 @@ sealed class CatalogIntent : Intent {
     class OnDeleteClick(val pageId: String) : CatalogIntent()
     class OnEditablePageChanged(val newPage: PageUI) : CatalogIntent()
     class PassParameter(val isPicker: Boolean) : CatalogIntent()
-    class OnBindLink(val pageId: String) : CatalogIntent()
+    class OnBindLink(val page: PageUI) : CatalogIntent()
 }

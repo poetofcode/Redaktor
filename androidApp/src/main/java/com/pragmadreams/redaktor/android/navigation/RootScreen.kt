@@ -22,7 +22,7 @@ import com.pragmadreams.redaktor.android.util.composable
 
 @Composable
 fun RootNavGraph(navController: NavHostController) {
-    NavHost(navController, startDestination = RootScreen.PageScreen.route) {
+    NavHost(navController, startDestination = RootScreen.CatalogScreen.route) {
         composable(RootScreen.PageScreen) {
             PageView().Content(hiltViewModel<PageViewModel>())
         }

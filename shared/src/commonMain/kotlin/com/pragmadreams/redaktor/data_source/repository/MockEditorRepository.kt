@@ -28,7 +28,7 @@ internal class MockEditorRepository : EditorRepository {
             LinkElement(
                 id = "6",
                 text = "Открыть page2",
-                relatedPageId = "2",
+                relatedPage = null,
             ),
             TextElement(
                 id = "5",
@@ -37,7 +37,7 @@ internal class MockEditorRepository : EditorRepository {
             LinkElement(
                 id = "7",
                 text = "Ссылка без привязки",
-                relatedPageId = null,
+                relatedPage = null,
             ),
         )
     )
@@ -52,7 +52,7 @@ internal class MockEditorRepository : EditorRepository {
             LinkElement(
                 id = "22",
                 text = "Открыть page1",
-                relatedPageId = "1",
+                relatedPage = null,
             ),
         )
     )

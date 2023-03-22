@@ -40,15 +40,15 @@ data class LinkElement(
     @SerialName("text")
     val text: String,
 
-    @SerialName("related_page_id")
-    val relatedPageId: String?,
+    @SerialName("related_page")
+    val relatedPage: Page? = null,
 ) : Element() {
 
     companion object {
         fun createEmpty(): Element = LinkElement(
             id = String(),
             text = String(),
-            relatedPageId = null,
+            relatedPage = null,
         )
     }
 }
