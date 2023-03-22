@@ -44,6 +44,10 @@ fun RootNavGraph(navController: NavHostController) {
         composable(route = RootScreen.CatalogScreen) {
             CatalogView().Content(hiltViewModel<CatalogViewModel>())
         }
+
+        composable(route = RootScreen.PickPageScreen) {
+            CatalogView(isPicker = true).Content(hiltViewModel<CatalogViewModel>())
+        }
     }
 }
 
@@ -53,4 +57,6 @@ sealed class RootScreen(override val route: String) : Screen(route) {
     object SampleScreen : RootScreen("/page/sample")
 
     object CatalogScreen : RootScreen("/page_screen/catalog")
+
+    object PickPageScreen : RootScreen("/page_screen/pick_page")
 }

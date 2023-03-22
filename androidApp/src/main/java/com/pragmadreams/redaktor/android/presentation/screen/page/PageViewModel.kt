@@ -187,7 +187,7 @@ class PageViewModel @Inject constructor(
                 }
             }
             ActionUI.BindLink -> {
-                // TODO navigate to page-list/choose-page screen
+                offerEffect(NavigationEffect.Navigate(RootScreen.CatalogScreen))
             }
         }
     }

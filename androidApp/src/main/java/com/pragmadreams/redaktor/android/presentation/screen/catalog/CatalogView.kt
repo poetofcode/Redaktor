@@ -27,7 +27,9 @@ import com.pragmadreams.redaktor.android.domain.model.PageMode
 import com.pragmadreams.redaktor.android.domain.model.PageUI
 import com.pragmadreams.redaktor.android.presentation.screen.page.PageIntent
 
-class CatalogView : ComposeView<CatalogState, CatalogIntent>() {
+class CatalogView(
+    val isPicker: Boolean = false,
+) : ComposeView<CatalogState, CatalogIntent>() {
 
     @Composable
     override fun Layout() {
