@@ -21,6 +21,7 @@ class CatalogViewModel @Inject constructor(
 
     init {
         fetchData()
+
     }
 
     private fun fetchData() {
@@ -76,6 +77,9 @@ class CatalogViewModel @Inject constructor(
             is CatalogIntent.OnEditablePageChanged -> {
                 updateState { copy(editablePage = intent.newPage) }
             }
+            is CatalogIntent.PassParameter -> {
+                updateState { copy(isPicker = intent.isPicker) }
+            }
         }
     }
 
@@ -114,6 +118,7 @@ class CatalogViewModel @Inject constructor(
 data class CatalogState(
     val pages: List<PageUI> = emptyList(),
     val editablePage: PageUI? = null,
+    val isPicker: Boolean = false,
 ) : State {
     val isEditing: Boolean get() = editablePage != null
 }
@@ -129,4 +134,5 @@ sealed class CatalogIntent : Intent {
 
     class OnDeleteClick(val pageId: String) : CatalogIntent()
     class OnEditablePageChanged(val newPage: PageUI) : CatalogIntent()
+    class PassParameter(val isPicker: Boolean) : CatalogIntent()
 }

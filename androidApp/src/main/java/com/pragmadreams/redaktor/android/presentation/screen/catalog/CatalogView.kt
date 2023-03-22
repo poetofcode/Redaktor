@@ -40,6 +40,9 @@ class CatalogView(
             Toolbar()
             PageList()
         }
+        LaunchedEffect(Unit) {
+            offerIntent(CatalogIntent.PassParameter(isPicker = isPicker))
+        }
     }
 
     @Composable
@@ -148,7 +151,7 @@ class CatalogView(
             val offerIntent = LocalOfferIntent.current
 
             Text(
-                text = "Redaktor",
+                text = if (!state.isPicker) "Redaktor" else "Привязка ссылки",
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(horizontal = 20.dp),

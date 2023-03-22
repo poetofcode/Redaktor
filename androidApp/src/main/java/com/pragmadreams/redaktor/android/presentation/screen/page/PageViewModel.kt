@@ -187,7 +187,7 @@ class PageViewModel @Inject constructor(
                 }
             }
             ActionUI.BindLink -> {
-                offerEffect(NavigationEffect.Navigate(RootScreen.CatalogScreen))
+                offerEffect(NavigationEffect.Navigate(RootScreen.PickPageScreen))
             }
         }
     }
