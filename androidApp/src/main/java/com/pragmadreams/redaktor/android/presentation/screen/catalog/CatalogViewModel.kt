@@ -7,6 +7,7 @@ import com.pragmadreams.redaktor.android.base.State
 import com.pragmadreams.redaktor.android.domain.model.PageUI
 import com.pragmadreams.redaktor.android.navigation.NavigationEffect
 import com.pragmadreams.redaktor.android.navigation.RootScreen
+import com.pragmadreams.redaktor.android.presentation.screen.page.misc.OnPagePickedEffect
 import com.pragmadreams.redaktor.domain.usecase.EditorUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -21,7 +22,6 @@ class CatalogViewModel @Inject constructor(
 
     init {
         fetchData()
-
     }
 
     private fun fetchData() {
@@ -81,6 +81,7 @@ class CatalogViewModel @Inject constructor(
                 updateState { copy(isPicker = intent.isPicker) }
             }
             is CatalogIntent.OnBindLink -> {
+                offerIntermediateEffect(OnPagePickedEffect(pageId = intent.pageId))
                 offerEffect(NavigationEffect.NavigateUp)
             }
         }

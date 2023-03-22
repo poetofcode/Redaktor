@@ -3,6 +3,7 @@ package com.pragmadreams.redaktor.android.presentation.screen.page
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.pragmadreams.redaktor.android.base.BaseViewModel
+import com.pragmadreams.redaktor.android.base.Effect
 import com.pragmadreams.redaktor.android.base.Intent
 import com.pragmadreams.redaktor.android.base.State
 import com.pragmadreams.redaktor.android.domain.model.ActionUI
@@ -11,6 +12,7 @@ import com.pragmadreams.redaktor.android.domain.model.PageMode
 import com.pragmadreams.redaktor.android.navigation.NavigationEffect
 import com.pragmadreams.redaktor.android.navigation.RootScreen
 import com.pragmadreams.redaktor.android.presentation.screen.page.misc.ElementType
+import com.pragmadreams.redaktor.android.presentation.screen.page.misc.OnPagePickedEffect
 import com.pragmadreams.redaktor.domain.usecase.EditorUseCase
 import com.pragmadreams.redaktor.entity.Element
 import com.pragmadreams.redaktor.entity.LinkElement
@@ -107,6 +109,15 @@ class PageViewModel @Inject constructor(
             is PageIntent.OnSelectElementType -> {
                 updateState { copy(elementType = intent.elementType) }
             }
+        }
+    }
+
+    override fun handleIntermediateEffect(effect: Effect) {
+        when (effect) {
+            is OnPagePickedEffect -> {
+                println("mylog ${effect.pageId}")
+            }
+            else -> Unit
         }
     }
 

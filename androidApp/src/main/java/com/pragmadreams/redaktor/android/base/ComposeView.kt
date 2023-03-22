@@ -5,6 +5,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import com.pragmadreams.redaktor.android.MyApplicationTheme
@@ -36,7 +37,9 @@ abstract class ComposeView<StateType : State, IntentType : Intent> {
 
     @Composable
     fun Content(viewModel: BaseViewModel<StateType, IntentType>) {
-        viewModel.onViewReady()
+        LaunchedEffect(Unit) {
+            viewModel.onViewReady()
+        }
         Content(state = viewModel.state.value, offerIntent = viewModel::handleIntent)
     }
 
