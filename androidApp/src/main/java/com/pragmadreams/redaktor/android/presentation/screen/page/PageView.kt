@@ -269,7 +269,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
                     }
                 }
                 is ElementUI.Link -> {
-                    val linkTitle = element.relatedPage?.title ?: "без названия"
+                    val linkTitle = element.relatedPage?.title?.takeIf { it.isNotBlank() } ?: "без названия"
                     if (editableElement is ElementUI.Link && editableElement.id == element.id) {
                         Column(Modifier.fillMaxWidth()) {
                             OutlinedTextField(
