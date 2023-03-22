@@ -80,6 +80,9 @@ class CatalogViewModel @Inject constructor(
             is CatalogIntent.PassParameter -> {
                 updateState { copy(isPicker = intent.isPicker) }
             }
+            is CatalogIntent.OnBindLink -> {
+                offerEffect(NavigationEffect.NavigateUp)
+            }
         }
     }
 
@@ -135,4 +138,5 @@ sealed class CatalogIntent : Intent {
     class OnDeleteClick(val pageId: String) : CatalogIntent()
     class OnEditablePageChanged(val newPage: PageUI) : CatalogIntent()
     class PassParameter(val isPicker: Boolean) : CatalogIntent()
+    class OnBindLink(val pageId: String) : CatalogIntent()
 }

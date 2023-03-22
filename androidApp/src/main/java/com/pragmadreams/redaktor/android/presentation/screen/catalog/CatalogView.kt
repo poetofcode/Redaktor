@@ -112,6 +112,11 @@ class CatalogView(
     fun ActionList(modifier: Modifier = Modifier, page: PageUI) {
         val offerIntent = LocalOfferIntent.current
         Row(modifier, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            if (isPicker) {
+                ActionButton(imageVector = Icons.Filled.Link) {
+                    offerIntent(CatalogIntent.OnBindLink(page.id))
+                }
+            }
             ActionButton(imageVector = Icons.Filled.Edit) {
                 offerIntent(CatalogIntent.OnEditClick(page.id))
             }
