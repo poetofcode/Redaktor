@@ -9,10 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -272,6 +269,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
                     }
                 }
                 is ElementUI.Link -> {
+                    val linkTitle = element.relatedPage?.title ?: "без названия"
                     if (editableElement is ElementUI.Link && editableElement.id == element.id) {
                         Column(Modifier.fillMaxWidth()) {
                             OutlinedTextField(
@@ -298,7 +296,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
                                 )
                                 Text(
                                     text = if (element.isBound) {
-                                        "Ссылка установлена"
+                                        "Ссылка установлена ($linkTitle)"
                                     } else {
                                         "Ссылка не задана"
                                     },
@@ -321,10 +319,17 @@ class PageView : ComposeView<PageState, PageIntent>() {
                                 ),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = element.text,
-                                modifier = Modifier.weight(1f),
-                            )
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = element.text,
+                                )
+                                CompositionLocalProvider(LocalContentAlpha provides 0.5f) {
+                                    Text(
+                                        text = linkTitle,
+                                        fontStyle = FontStyle.Italic,
+                                    )
+                                }
+                            }
                             Icon(
                                 modifier = Modifier.padding(start = 10.dp),
                                 imageVector = if (element.isBound) Icons.Filled.ArrowForward else Icons.Filled.LinkOff,
