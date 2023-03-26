@@ -142,18 +142,19 @@ class PageViewModel @Inject constructor(
         when (val mode = state.value.mode) {
             is PageMode.Edit -> {
                 val editableElement = mode.element
-                editorUseCase.createOrUpdateElement(state.value.pageId
-                    ?: return, toElementApi(editableElement))
-                    .onEach {
-                        fetchPageData()
-                        updateState {
-                            copy(
-                                mode = PageMode.Select,
-                            )
-                        }
+                editorUseCase.createOrUpdateElement(
+                    pageId = state.value.pageId ?: return,
+                    element = toElementApi(editableElement)
+                ).onEach {
+                    fetchPageData()
+                    updateState {
+                        copy(
+                            mode = PageMode.Select,
+                        )
                     }
-                    .catch { e -> e.printStackTrace() }
-                    .launchIn(viewModelScope)
+                }.catch {
+                    it.printStackTrace()
+                }.launchIn(viewModelScope)
             }
             else -> return
         }
