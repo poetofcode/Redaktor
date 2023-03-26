@@ -14,6 +14,7 @@ import com.pragmadreams.redaktor.android.navigation.NavigationEffect
 import com.pragmadreams.redaktor.android.navigation.RootScreen
 import com.pragmadreams.redaktor.android.presentation.screen.page.misc.ElementType
 import com.pragmadreams.redaktor.android.presentation.screen.page.misc.OnPagePickedEffect
+import com.pragmadreams.redaktor.android.presentation.screen.page.misc.OnPagesUpdatedEffect
 import com.pragmadreams.redaktor.domain.usecase.EditorUseCase
 import com.pragmadreams.redaktor.entity.Element
 import com.pragmadreams.redaktor.entity.LinkElement
@@ -134,6 +135,11 @@ class PageViewModel @Inject constructor(
                 }
                 applyElementChanges()
             }
+
+            OnPagesUpdatedEffect -> {
+                fetchPageData()
+            }
+
             else -> Unit
         }
     }

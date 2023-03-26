@@ -126,7 +126,6 @@ class CatalogView(
         }
     }
 
-
     @Composable
     private fun ActionButton(
         modifier: Modifier = Modifier,
