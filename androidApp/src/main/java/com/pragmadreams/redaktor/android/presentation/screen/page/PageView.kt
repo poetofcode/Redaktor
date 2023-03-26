@@ -9,9 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -26,8 +24,10 @@ import com.pragmadreams.redaktor.android.base.ComposeView
 import com.pragmadreams.redaktor.android.domain.model.ActionUI
 import com.pragmadreams.redaktor.android.domain.model.ElementUI
 import com.pragmadreams.redaktor.android.domain.model.PageMode
-import com.pragmadreams.redaktor.android.presentation.screen.catalog.CatalogIntent
+import com.pragmadreams.redaktor.android.presentation.screen.page.misc.ElementType
 import com.pragmadreams.redaktor.android.util.compose.drag_and_drop_list.DragDropList
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 class PageView : ComposeView<PageState, PageIntent>() {
 
@@ -52,6 +52,81 @@ class PageView : ComposeView<PageState, PageIntent>() {
 
         //      TODO АКТУАЛЬНО ЛИ ДАННОЕ TO_DO ???
 
+        val coroutineScope = rememberCoroutineScope()
+        val modalSheetState = rememberModalBottomSheetState(
+            initialValue = ModalBottomSheetValue.Hidden,
+            confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded },
+            skipHalfExpanded = true,
+        )
+
+        ModalBottomSheetLayout(
+            sheetState = modalSheetState,
+            sheetShape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
+            sheetContent = {
+                ModalBottomSheetContent(coroutineScope, modalSheetState)
+            }
+        ) {
+            PageContent(focusRequester, onOptionButtonClick = {
+                coroutineScope.launch { modalSheetState.show() }
+            })
+        }
+    }
+
+    @Composable
+    private fun ModalBottomSheetContent(
+        coroutineScope: CoroutineScope,
+        modalSheetState: ModalBottomSheetState
+    ) {
+        val offerIntent = LocalOfferIntent.current
+        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Spacer(Modifier.size(20.dp))
+
+            elementTypes.forEach {
+                ElementTypeItem(titleFromType(elementType = it)) {
+                    coroutineScope.launch { modalSheetState.hide() }
+                    offerIntent(PageIntent.OnSelectElementType(elementType = it))
+                }
+            }
+
+            Button(
+                modifier = Modifier.padding(bottom = 20.dp),
+                onClick = {
+                    coroutineScope.launch { modalSheetState.hide() }
+                }
+            ) {
+                Text(text = "Отмена")
+            }
+        }
+    }
+
+    private fun titleFromType(elementType: ElementType): String {
+        return when (elementType) {
+            ElementType.TEXT -> "Текст"
+            ElementType.LINK -> "Ссылка"
+        }
+    }
+
+    @Composable
+    private fun ElementTypeItem(title: String, onClick: () -> Unit) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(bottom = 8.dp, start = 16.dp, end = 16.dp)
+                .background(Color.LightGray.copy(alpha = 0.5f), shape = RoundedCornerShape(5.dp))
+                .clickable { onClick() },
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically)
+        {
+            Text(
+                text = title,
+                modifier = Modifier.padding()
+            )
+        }
+    }
+
+    @Composable
+    private fun PageContent(focusRequester: FocusRequester, onOptionButtonClick: () -> Unit) {
         Column {
             Toolbar()
             Box(Modifier.fillMaxSize()) {
@@ -66,31 +141,56 @@ class PageView : ComposeView<PageState, PageIntent>() {
                         .align(Alignment.BottomCenter)
                 )
                 AddElementButton(
-                    Modifier
+                    modifier = Modifier
                         .height(floatingToolbarHeight)
-                        .align(Alignment.BottomCenter)
+                        .align(Alignment.BottomCenter),
+                    onOptionButtonClick = onOptionButtonClick
                 )
             }
         }
     }
 
     @Composable
-    private fun AddElementButton(modifier: Modifier = Modifier) {
+    private fun AddElementButton(
+        modifier: Modifier = Modifier,
+        onOptionButtonClick: () -> Unit,
+    ) {
         val state = LocalState.current
         val offerIntent = LocalOfferIntent.current
         when (state.mode) {
             is PageMode.Select -> {
                 Row(modifier.fillMaxWidth()) {
-                    Box(modifier = modifier
-                        .fillMaxWidth()
+                    Row(modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(1f)
                         .background(Color.Cyan)
+                        .clickable { offerIntent(PageIntent.OnAddNewElementClick) }
+                        .padding(5.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            modifier = Modifier.align(Alignment.CenterVertically),
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = null
+                        )
+                        Text(
+                            text = titleFromType(state.elementType),
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                    Box(modifier = Modifier
+                        .fillMaxHeight()
+                        .width(50.dp)
+                        .background(Color.Green)
                         .clickable {
-                            offerIntent(PageIntent.OnAddNewElementClick)
+                            onOptionButtonClick()
                         }
-                        .padding(5.dp)) {
+                        .padding(5.dp)
+                    ) {
                         Icon(
                             modifier = Modifier.align(Alignment.Center),
-                            imageVector = Icons.Filled.Add,
+                            imageVector = Icons.Filled.ArrowDropUp,
                             contentDescription = null
                         )
                     }
@@ -169,6 +269,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
                     }
                 }
                 is ElementUI.Link -> {
+                    val linkTitle = element.relatedPage?.title?.takeIf { it.isNotBlank() } ?: "без названия"
                     if (editableElement is ElementUI.Link && editableElement.id == element.id) {
                         Column(Modifier.fillMaxWidth()) {
                             OutlinedTextField(
@@ -195,7 +296,7 @@ class PageView : ComposeView<PageState, PageIntent>() {
                                 )
                                 Text(
                                     text = if (element.isBound) {
-                                        "Ссылка установлена"
+                                        "Ссылка установлена ($linkTitle)"
                                     } else {
                                         "Ссылка не задана"
                                     },
@@ -218,10 +319,17 @@ class PageView : ComposeView<PageState, PageIntent>() {
                                 ),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = element.text,
-                                modifier = Modifier.weight(1f),
-                            )
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = element.text,
+                                )
+                                CompositionLocalProvider(LocalContentAlpha provides 0.5f) {
+                                    Text(
+                                        text = linkTitle,
+                                        fontStyle = FontStyle.Italic,
+                                    )
+                                }
+                            }
                             Icon(
                                 modifier = Modifier.padding(start = 10.dp),
                                 imageVector = if (element.isBound) Icons.Filled.ArrowForward else Icons.Filled.LinkOff,
@@ -370,6 +478,10 @@ class PageView : ComposeView<PageState, PageIntent>() {
             mode = PageMode.View,
         )
         PageView().Content(previewState)
+    }
+
+    companion object {
+        val elementTypes = listOf(ElementType.TEXT, ElementType.LINK)
     }
 
 }

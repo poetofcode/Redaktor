@@ -3,16 +3,22 @@ package com.pragmadreams.redaktor.android.presentation.screen.page
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.pragmadreams.redaktor.android.base.BaseViewModel
+import com.pragmadreams.redaktor.android.base.Effect
 import com.pragmadreams.redaktor.android.base.Intent
 import com.pragmadreams.redaktor.android.base.State
 import com.pragmadreams.redaktor.android.domain.model.ActionUI
 import com.pragmadreams.redaktor.android.domain.model.ElementUI
 import com.pragmadreams.redaktor.android.domain.model.PageMode
+import com.pragmadreams.redaktor.android.domain.model.PageUI
 import com.pragmadreams.redaktor.android.navigation.NavigationEffect
 import com.pragmadreams.redaktor.android.navigation.RootScreen
+import com.pragmadreams.redaktor.android.presentation.screen.page.misc.ElementType
+import com.pragmadreams.redaktor.android.presentation.screen.page.misc.OnPagePickedEffect
+import com.pragmadreams.redaktor.android.presentation.screen.page.misc.OnPagesUpdatedEffect
 import com.pragmadreams.redaktor.domain.usecase.EditorUseCase
 import com.pragmadreams.redaktor.entity.Element
 import com.pragmadreams.redaktor.entity.LinkElement
+import com.pragmadreams.redaktor.entity.Page
 import com.pragmadreams.redaktor.entity.TextElement
 import com.pragmadreams.redaktor.util.swap
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -67,9 +73,9 @@ class PageViewModel @Inject constructor(
             is PageIntent.OnElementClick -> {
                 when (val element = intent.element) {
                     is ElementUI.Link -> {
-                        element.relatedPageId?.let { pageId ->
+                        element.relatedPage?.let { page ->
                             offerEffect(NavigationEffect.Navigate(
-                                RootScreen.PageScreen.withArguments("pageId" to pageId)
+                                RootScreen.PageScreen.withArguments("pageId" to page.id)
                             ))
                         }
                     }
@@ -102,6 +108,39 @@ class PageViewModel @Inject constructor(
             }
             PageIntent.OnFinishDragging -> updateState { copy(draggableIndex = null) }
             is PageIntent.OnStartDragging -> updateState { copy(draggableIndex = intent.itemIndex) }
+
+            is PageIntent.OnSelectElementType -> {
+                updateState { copy(elementType = intent.elementType) }
+            }
+        }
+    }
+
+    override fun handleIntermediateEffect(effect: Effect) {
+        when (effect) {
+            is OnPagePickedEffect -> {
+                val currentMode = state.value.mode
+                if (currentMode !is PageMode.Edit) {
+                    return
+                }
+                val editableElement = currentMode.element
+                if (editableElement !is ElementUI.Link) {
+                    return
+                }
+                updateState {
+                    copy(
+                        mode = PageMode.Edit(
+                            element = editableElement.copy(relatedPage = effect.page)
+                        )
+                    )
+                }
+                applyElementChanges()
+            }
+
+            OnPagesUpdatedEffect -> {
+                fetchPageData()
+            }
+
+            else -> Unit
         }
     }
 
@@ -109,25 +148,30 @@ class PageViewModel @Inject constructor(
         when (val mode = state.value.mode) {
             is PageMode.Edit -> {
                 val editableElement = mode.element
-                editorUseCase.createOrUpdateElement(state.value.pageId
-                    ?: return, toElementApi(editableElement))
-                    .onEach {
-                        fetchPageData()
-                        updateState {
-                            copy(
-                                mode = PageMode.Select,
-                            )
-                        }
+                editorUseCase.createOrUpdateElement(
+                    pageId = state.value.pageId ?: return,
+                    element = toElementApi(editableElement)
+                ).onEach {
+                    fetchPageData()
+                    updateState {
+                        copy(
+                            mode = PageMode.Select,
+                        )
                     }
-                    .catch { e -> e.printStackTrace() }
-                    .launchIn(viewModelScope)
+                }.catch {
+                    it.printStackTrace()
+                }.launchIn(viewModelScope)
             }
             else -> return
         }
     }
 
     private fun onAddNewElementClick() {
-        addNewElementToPage(TextElement.createEmpty())
+        val elementToAdd = when (state.value.elementType) {
+            ElementType.TEXT -> TextElement.createEmpty()
+            ElementType.LINK -> LinkElement.createEmpty()
+        }
+        addNewElementToPage(elementToAdd)
     }
 
     private fun addNewElementToPage(element: Element) {
@@ -178,7 +222,7 @@ class PageViewModel @Inject constructor(
                 }
             }
             ActionUI.BindLink -> {
-                // TODO navigate to page-list/choose-page screen
+                offerEffect(NavigationEffect.Navigate(RootScreen.PickPageScreen))
             }
         }
     }
@@ -196,7 +240,9 @@ class PageViewModel @Inject constructor(
                     ElementUI.Link(
                         text = element.text,
                         id = element.id,
-                        relatedPageId = element.relatedPageId
+                        relatedPage = element.relatedPage?.run {
+                            PageUI(id = this.id, title = this.title)
+                        },
                     )
                 }
                 else -> null
@@ -213,7 +259,13 @@ class PageViewModel @Inject constructor(
             is ElementUI.Link -> LinkElement(
                 id = elementUi.id,
                 text = elementUi.text,
-                relatedPageId = elementUi.relatedPageId,
+                relatedPage = if (elementUi.relatedPage != null) {
+                    Page(
+                        id = elementUi.relatedPage.id,
+                        title = elementUi.relatedPage.title,
+                        elements = emptyList(),
+                    )
+                } else null,
             )
         }
     }
@@ -227,6 +279,7 @@ sealed class PageIntent : Intent {
     class OnReorderListElement(val oldPosition: Int, val newPosition: Int) : PageIntent()
 
     class OnStartDragging(val itemIndex: Int) : PageIntent()
+    class OnSelectElementType(val elementType: ElementType) : PageIntent()
 
     object OnFinishDragging : PageIntent()
 
@@ -244,6 +297,7 @@ data class PageState(
     val elements: List<ElementUI> = emptyList(),
     val mode: PageMode = PageMode.View,
     val draggableIndex: Int? = null,
+    val elementType: ElementType = ElementType.TEXT,
 ) : State {
     val isDragging: Boolean get() = draggableIndex != null
 }

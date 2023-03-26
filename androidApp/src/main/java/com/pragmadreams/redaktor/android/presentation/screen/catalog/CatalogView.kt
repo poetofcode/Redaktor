@@ -27,7 +27,9 @@ import com.pragmadreams.redaktor.android.domain.model.PageMode
 import com.pragmadreams.redaktor.android.domain.model.PageUI
 import com.pragmadreams.redaktor.android.presentation.screen.page.PageIntent
 
-class CatalogView : ComposeView<CatalogState, CatalogIntent>() {
+class CatalogView(
+    val isPicker: Boolean = false,
+) : ComposeView<CatalogState, CatalogIntent>() {
 
     @Composable
     override fun Layout() {
@@ -37,6 +39,9 @@ class CatalogView : ComposeView<CatalogState, CatalogIntent>() {
         Column {
             Toolbar()
             PageList()
+        }
+        LaunchedEffect(Unit) {
+            offerIntent(CatalogIntent.PassParameter(isPicker = isPicker))
         }
     }
 
@@ -107,6 +112,11 @@ class CatalogView : ComposeView<CatalogState, CatalogIntent>() {
     fun ActionList(modifier: Modifier = Modifier, page: PageUI) {
         val offerIntent = LocalOfferIntent.current
         Row(modifier, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            if (isPicker) {
+                ActionButton(imageVector = Icons.Filled.Link) {
+                    offerIntent(CatalogIntent.OnBindLink(page))
+                }
+            }
             ActionButton(imageVector = Icons.Filled.Edit) {
                 offerIntent(CatalogIntent.OnEditClick(page.id))
             }
@@ -115,7 +125,6 @@ class CatalogView : ComposeView<CatalogState, CatalogIntent>() {
             }
         }
     }
-
 
     @Composable
     private fun ActionButton(
@@ -146,7 +155,7 @@ class CatalogView : ComposeView<CatalogState, CatalogIntent>() {
             val offerIntent = LocalOfferIntent.current
 
             Text(
-                text = "Redaktor",
+                text = if (!state.isPicker) "Redaktor" else "Привязка ссылки",
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(horizontal = 20.dp),

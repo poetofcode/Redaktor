@@ -11,9 +11,13 @@ import com.pragmadreams.redaktor.android.navigation.RootNavGraph
 import com.pragmadreams.redaktor.android.shared.Hub
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var hub : Hub
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +31,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun collectNavigationEvents(navHostController: NavHostController) = lifecycleScope.launch {
-        Hub.effectFlow.collect { effect ->
+        hub.effectFlow.collect { effect ->
             if (effect is NavigationEffect) {
                 when (effect) {
                     is NavigationEffect.Navigate -> navHostController.navigate(

@@ -41,6 +41,7 @@ class FileEditorRepository(
     private val customJson = Json {
         serializersModule = module
         encodeDefaults = true
+        ignoreUnknownKeys = true
     }
 
     override suspend fun fetchStartPage(): Page {
@@ -186,6 +187,7 @@ class FileEditorRepository(
                 _data = this
             }
         } catch (e: Throwable) {
+            e.printStackTrace()
             _data = PersistentData.EMPTY
             _data!!
         }
